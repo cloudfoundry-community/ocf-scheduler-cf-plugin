@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"code.cloudfoundry.org/cli/plugin"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -129,34 +131,22 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 }
 
 func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
-	// User must be logged in
-	good, err := cliConnection.IsLoggedIn()
-	if err != nil || !good {
-		panic("at the disco")
-	}
-
-	// We must know the API Endpoint
-	good, err = cliConnection.HasAPIEndpoint()
-	if err != nil || !good {
-		panic("in the streets")
-	}
-
-	// We must have the user's API token
-	token, err := cliConnection.AccessToken()
+	scheduler, err := core.GetScheduler(cliConnection)
 	if err != nil {
-		panic("in the burning house")
+		fmt.Println(err)
+		return
 	}
 
-	api, err := cliConnection.ApiEndpoint()
+	token, err := core.GetBearer(cliConnection)
 	if err != nil {
-		panic("for the end is nigh")
+		fmt.Println(err)
+		return
 	}
-
-	scheduler := core.GetScheduler(api)
 
 	client, err := core.NewDriver(scheduler, token)
 	if err != nil {
-		panic("like you mean it")
+		fmt.Println("Could not create a Scheduler API client.")
+		return
 	}
 
 	services := &core.Services{CLI: cliConnection, Client: client}
