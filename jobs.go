@@ -102,6 +102,12 @@ func (c *OCFScheduler) ScheduleJob(services *core.Services, args []string) {
 
 // cf jobs
 func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
+	space, err := services.CLI.GetCurrentSpace()
+	if err != nil {
+		panic("in the far reaches of space")
+	}
+
+	fmt.Println("Space GUID:", space.SpaceFields.Guid, ", Space Name:", space.SpaceFields.Name)
 	/* Inputs
 	detailed := "false"
 	page := "false"

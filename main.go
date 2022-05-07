@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"code.cloudfoundry.org/cli/plugin"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -154,9 +152,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 		panic("for the end is nigh")
 	}
 
-	fmt.Println("The API Endpoint is", api)
-
-	//scheduler := core.GetScheduler(api)
+	scheduler := core.GetScheduler(api)
 
 	client, err := core.NewDriver(api, token)
 	if err != nil {
