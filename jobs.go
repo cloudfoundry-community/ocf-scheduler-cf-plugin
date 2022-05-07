@@ -109,10 +109,10 @@ func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
 		return
 	}
 
-	fmt.Println("Space GUID:", space.SpaceFields.Guid, ", Space Name:", space.SpaceFields.Name)
+	spaceGUID := space.SpaceFields.Guid
 
 	params := hype.Params{}
-	params.Set("space_guid", space.SpaceFields.Guid)
+	params.Set("space_guid", spaceGUID)
 
 	response := services.Client.Get("jobs", params)
 
@@ -125,14 +125,15 @@ func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
 		Resources []*scheduler.Job `json:"resources"`
 	}{}
 
-	err := json.Unmarshal(response.Data(), &data)
+	err = json.Unmarshal(response.Data(), &data)
 	if err != nil {
 		fmt.Println("Could not decode Scheduler API response.")
 		return
 	}
 
+	fmt.Printf("Jobs for Space %s:\n\n", space.SpaceFields.Name)
 	for _, job := range data.Resources {
-		fmt.Printf("%s (%s)\n", job.Name, job.GUID)
+		fmt.Printf("\t%s (%s)\n", job.Name, job.GUID)
 	}
 }
 
