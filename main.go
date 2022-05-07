@@ -154,7 +154,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	scheduler := core.GetScheduler(api)
 
-	client, err := core.NewDriver(api, token)
+	client, err := core.NewDriver(scheduler, token)
 	if err != nil {
 		panic("like you mean it")
 	}
