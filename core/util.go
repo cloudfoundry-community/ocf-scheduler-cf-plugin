@@ -10,7 +10,10 @@ import (
 //}
 
 func GetScheduler(api string) string {
-	u := url.Parse(api)
+	u, err := url.Parse(api)
+	if err != nil {
+		panic("couldn't parse the api endpoint")
+	}
 
 	parts := strings.Split(u.Host, ".")
 	parts[0] = "scheduler"
