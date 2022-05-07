@@ -4,7 +4,7 @@ build:
 	go build $(GO_LDFLAGS) .
 
 install:
-	cf uninstall-plugin ocf-scheduler || true
-	yes | cf install-plugin cf-plugin-*
+	cf uninstall-plugin OCFScheduler || true
+	yes | cf install-plugin ocf-scheduler-cf-plugin
 
 all: build install
