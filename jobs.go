@@ -105,23 +105,35 @@ func (c *OCFScheduler) ScheduleJob(services *core.Services, args []string) {
 func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
 	space, err := services.CLI.GetCurrentSpace()
 	if err != nil {
-		panic("in the far reaches of space")
+		fmt.Println("Could not get current Space.")
+		return
 	}
 
 	fmt.Println("Space GUID:", space.SpaceFields.Guid, ", Space Name:", space.SpaceFields.Name)
-	/* Inputs
-	detailed := "false"
-	page := "false"
-	space_guid := GUID
-	*/
-	/* API
-	method := "GET"
-	path := fmt.Sprintf("/jobs?space_guid=%s", space_guid)
-	*/
-	/* Reponses
-	 */
 
-	fmt.Println("TODO: Implement OCFScheduler.Jobs().")
+	params := hype.Params{}
+	params.Set("space_guid", space.SpaceFields.Guid)
+
+	response := services.Client.Get("jobs", params)
+
+	if !response.Okay() {
+		fmt.Println("Got a bad response from the Scheduler API.")
+		return
+	}
+
+	data := struct {
+		Resources []*scheduler.Job `json:"resources"`
+	}{}
+
+	err := json.Unmarshal(response.Data(), &data)
+	if err != nil {
+		fmt.Println("Could not decode Scheduler API response.")
+		return
+	}
+
+	for _, job := range data.Resources {
+		fmt.Printf("%s (%s)\n", job.Name, job.GUID)
+	}
 }
 
 // cf job-schedules SCHEDULE
