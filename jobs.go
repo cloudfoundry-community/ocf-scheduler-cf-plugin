@@ -1,68 +1,69 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
+	"github.com/ess/hype"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
+	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
 )
 
 // FIRST GOAL!!!
 // cf create-job APP_NAME NAME COMMAND
 func (c *OCFScheduler) CreateJob(services *core.Services, args []string) {
 
-	//name := ""
-	//command := ""
-	//disk := ""   // 1024MB default
-	//memory := "" // 1024MB default
-	/* API */
-	//method := "POST"
-	//headers = ["Content-Type: application/json", "Accept: application/json"]
-	//path := "/jobs?app_guid=GUID "
-	//body := fmt.Sprintf("{\"name\":\"%s\", \"command\":\"%s\", \"disk_in_mb\":%s, \"memory_in_mb\": %s}", name, command, disk, memory)
-	/* Responses
-	 */
-	fmt.Println("TODO: Implement OCFScheduler.CreateJob().")
-	/* hype method:
+	if len(args) != 4 {
+		fmt.Println("cf create-job APP_NAME NAME COMMAND")
+		return
+	}
 
-	  appGUID := args[0]
-	  jobName := args[1]
-	  jobCommand := args[2]
+	appName := args[1]
+	name := args[2]
+	command := args[3]
 
-	  params := hype.Params{}
-	  params.Set("app_guid", appGUID)
+	app, err := services.CLI.GetApp(appName)
+	if err != nil {
+		fmt.Println("Could not find app with name", appName)
+		return
+	}
 
-	  payload := &scheduler.Job{
-	    Name:    jobName,
-	    Command: jobCommand,
-	  }
+	params := hype.Params{}
+	params.Set("app_guid", app.Guid)
 
-	  data, err := json.Marshal(payload)
+	payload := &scheduler.Job{
+		Name:    name,
+		Command: command,
+	}
 
-	  response := core.Client.Post("jobs", params, data)
+	data, err := json.Marshal(payload)
+	if err != nil {
+		fmt.Println("Could not prepare the request payload")
+		return
+	}
 
-	  if !response.Okay() {
-	    return response.Error()
-	  }
+	response := services.Client.Post("jobs", params, data)
 
-	  err = json.Unmarshal(response.Data(), payload)
-	  if err != nil {
-	    return err
-	  }
+	if !response.Okay() {
+		fmt.Println(response.Error())
+		return
+	}
 
-	  fmt.Printf(
-	    "Created job %s\n\tGUID: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
-	    payload.Name,
-	    payload.GUID,
-	    payload.AppGUID,
-	    payload.SpaceGUID,
-	    payload.Command,
-	  )
+	err = json.Unmarshal(response.Data(), payload)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
-	  return nil
-	},
-	SilenceUsage:  true,
-	SilenceErrors: true,
-	*/
+	fmt.Printf(
+		"Created job %s\n\tGUID: %s\n\tApp Name: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
+		payload.Name,
+		payload.GUID,
+		appName,
+		payload.AppGUID,
+		payload.SpaceGUID,
+		payload.Command,
+	)
 }
 
 // cf run-job NAME
