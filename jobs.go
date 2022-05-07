@@ -2,123 +2,91 @@ package main
 
 import (
 	"fmt"
-	"net/http"
-	"time"
-	//   "github.com/ess/hype"
-	"code.cloudfoundry.org/cli/plugin"
+
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// httpReq("GET", "/...",)
-func httpReq(method string, url string, body = "", headers [][]string = [[]], timeout = 10) (http.Reponse, error) {
-	api := os.GetEnv("API_URL")
-	token := os.GetEnv("BEARER_TOKEN")
-
-	client := &http.Client{
-		Timeout: time.Second * timeout,
-	}
-
-	req, err := http.NewRequest(method, url, nil)
-	if err != nil {
-		return fmt.Errorf("Error: %s", err.Error())
-	}
-
-	req.Header.Set("user-agent", "ocf-scheduler")
-	for header := range headers {
-    h := strings.Split(header,': ')
-		req.Header.Add(h[0], h[1])
-	}
-
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, fmt.Errorf("Error: %s", err.Error())
-	}
-	defer response.Body.Close()
-	// TODO: Return response for processing
-	return response, nil
-}
-
 // FIRST GOAL!!!
-// cf create-job ....
-func (c *OCFScheduler) CreateJob(args []string) {
-	client := &http.Client{
-	}
+// cf create-job APP_NAME NAME COMMAND
+func (c *OCFScheduler) CreateJob(services *core.Services, args []string) {
 
-	name := ""
-	command := ""
-	disk := "" // 1024MB default
-	memory := "" // 1024MB default
+	//name := ""
+	//command := ""
+	//disk := ""   // 1024MB default
+	//memory := "" // 1024MB default
 	/* API */
-	method := "POST"
-	headers = ["Content-Type: application/json", "Accept: application/json"]
-	path := "/jobs?app_guid=GUID "
-	body := fmt.Sprintf("{\"name\":\"%s\", \"command\":\"%s\", \"disk_in_mb\":%s, \"memory_in_mb\": %s}", name, command, disk, memory)
-	*/
+	//method := "POST"
+	//headers = ["Content-Type: application/json", "Accept: application/json"]
+	//path := "/jobs?app_guid=GUID "
+	//body := fmt.Sprintf("{\"name\":\"%s\", \"command\":\"%s\", \"disk_in_mb\":%s, \"memory_in_mb\": %s}", name, command, disk, memory)
 	/* Responses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.CreateJob().")
 	/* hype method:
 
-    appGUID := args[0]
-    jobName := args[1]
-    jobCommand := args[2]
+	  appGUID := args[0]
+	  jobName := args[1]
+	  jobCommand := args[2]
 
-    params := hype.Params{}
-    params.Set("app_guid", appGUID)
+	  params := hype.Params{}
+	  params.Set("app_guid", appGUID)
 
-    payload := &scheduler.Job{
-      Name:    jobName,
-      Command: jobCommand,
-    }
+	  payload := &scheduler.Job{
+	    Name:    jobName,
+	    Command: jobCommand,
+	  }
 
-    data, err := json.Marshal(payload)
+	  data, err := json.Marshal(payload)
 
-    response := core.Client.Post("jobs", params, data)
+	  response := core.Client.Post("jobs", params, data)
 
-    if !response.Okay() {
-      return response.Error()
-    }
+	  if !response.Okay() {
+	    return response.Error()
+	  }
 
-    err = json.Unmarshal(response.Data(), payload)
-    if err != nil {
-      return err
-    }
+	  err = json.Unmarshal(response.Data(), payload)
+	  if err != nil {
+	    return err
+	  }
 
-    fmt.Printf(
-      "Created job %s\n\tGUID: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
-      payload.Name,
-      payload.GUID,
-      payload.AppGUID,
-      payload.SpaceGUID,
-      payload.Command,
-    )
+	  fmt.Printf(
+	    "Created job %s\n\tGUID: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
+	    payload.Name,
+	    payload.GUID,
+	    payload.AppGUID,
+	    payload.SpaceGUID,
+	    payload.Command,
+	  )
 
-    return nil
-  },
-  SilenceUsage:  true,
-  SilenceErrors: true,
+	  return nil
+	},
+	SilenceUsage:  true,
+	SilenceErrors: true,
 	*/
 }
 
-func (c *OCFScheduler) RunJob(args []string) {
+// cf run-job NAME
+func (c *OCFScheduler) RunJob(services *core.Services, args []string) {
 	/* API Call */
-	// ok,err := if HasSpace() { 
-	space_guid := "" //GetSpace()???
-	method := "GET"
-	path := fmt.Sprintf("jobs?space_guid=%s",space_guid)
-	headers := "-H 'Accept: application/json'"
+	// ok,err := if HasSpace() {
+	//space_guid := "" //GetSpace()???
+	//method := "GET"
+	//path := fmt.Sprintf("jobs?space_guid=%s", space_guid)
+	//headers := "-H 'Accept: application/json'"
 
-	Loop over response entries and print out.
-	TODO: --json output support
+	//Loop over response entries and print out.
+	//TODO: --json output support
 	/* Responses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.RunJob().")
 }
 
-func (c *OCFScheduler) ScheduleJob(args []string) {
+// cf schedule-job GUID SCHEDULE
+func (c *OCFScheduler) ScheduleJob(services *core.Services, args []string) {
 	/* Inputs
 	enabled := "false"
-	expression := 
-	type := 
+	expression :=
+	type :=
 	*/
 
 	/* API Call
@@ -128,11 +96,12 @@ func (c *OCFScheduler) ScheduleJob(args []string) {
 	*/
 
 	/* Responses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.ScheduleJob().")
 }
 
-func (c *OCFScheduler) Jobs(args []string) {
+// cf jobs
+func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
 	/* Inputs
 	detailed := "false"
 	page := "false"
@@ -143,12 +112,13 @@ func (c *OCFScheduler) Jobs(args []string) {
 	path := fmt.Sprintf("/jobs?space_guid=%s", space_guid)
 	*/
 	/* Reponses
-	*/
+	 */
 
 	fmt.Println("TODO: Implement OCFScheduler.Jobs().")
 }
 
-func (c *OCFScheduler) JobSchedules(args []string) {
+// cf job-schedules SCHEDULE
+func (c *OCFScheduler) JobSchedules(services *core.Services, args []string) {
 	/* Inputs
 	job_guid := ""
 	page := "false"
@@ -159,11 +129,12 @@ func (c *OCFScheduler) JobSchedules(args []string) {
 	headers := "Accept: application/json"
 	*/
 	/* Reponses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.JobSchedules().")
 }
 
-func (c *OCFScheduler) JobHistory(args []string) {
+// cf job-history NAME
+func (c *OCFScheduler) JobHistory(services *core.Services, args []string) {
 	/* Inputs
 	job_guid := ""
 	page := "false"
@@ -173,11 +144,12 @@ func (c *OCFScheduler) JobHistory(args []string) {
 	path := fmt.Sprintf("/jobs/%s/history",job_guid)
 	*/
 	/* Reponses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.JobHistory().")
 }
 
-func (c *OCFScheduler) DeleteJob(args []string) {
+// cf delete-job NAME
+func (c *OCFScheduler) DeleteJob(services *core.Services, args []string) {
 	/* Inputs
 	job_guid := ""
 	*/
@@ -186,11 +158,12 @@ func (c *OCFScheduler) DeleteJob(args []string) {
 	path := fmt.Sprintf("/jobs/%s",job_guid)
 	*/
 	/* Reponses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.DeleteJob().")
 }
 
-func (c *OCFScheduler) DeleteJobSchedule(args []string) {
+// cf delete-job-schedule SCHEDULE_GUID
+func (c *OCFScheduler) DeleteJobSchedule(services *core.Services, args []string) {
 	/* Inputs
 	job_guid := ""
 	schedule_guid :=  ""
@@ -200,7 +173,6 @@ func (c *OCFScheduler) DeleteJobSchedule(args []string) {
 	path := fmt.Sprintf("/jobs/%s/schedules/%s",job_guid, schedule_guid)
 	*/
 	/* Reponses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.DeleteJobSchedule().")
 }
-

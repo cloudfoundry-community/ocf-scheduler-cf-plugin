@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"code.cloudfoundry.org/cli/plugin"
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-func (c *OCFScheduler) CreateCall(args []string) {
+func (c *OCFScheduler) CreateCall(services *core.Services, args []string) {
 	/* Inputs */
 	/* API
 	headers := "-H 'Content-Type: application/json' -H 'Accept: application/json'"
@@ -15,11 +15,11 @@ func (c *OCFScheduler) CreateCall(args []string) {
 	path := fmt.Sprintf("/calls",app_guid)
 	*/
 	/* Reponses
-	*/
+	 */
 	fmt.Println("TODO: Implement OCFScheduler.RunCall().")
 }
 
-func (c *OCFScheduler) RunCall(args []string) {
+func (c *OCFScheduler) RunCall(services *core.Services, args []string) {
 	/* Inputs
 	call_guid := ""
 	*/
@@ -46,12 +46,12 @@ func (c *OCFScheduler) RunCall(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.RunCall().")
 }
 
-func (c *OCFScheduler) ScheduleCall(args []string) {
+func (c *OCFScheduler) ScheduleCall(services *core.Services, args []string) {
 	/* Inputs */
-	call_guid := ""
+	//call_guid := ""
 	/* API */
-	method := "POST"
-	path := fmt.Sprintf("/calls/%s/schedules",call_guid)
+	//method := "POST"
+	//path := fmt.Sprintf("/calls/%s/schedules", call_guid)
 	/* Reponses
 	201 Response
 	{
@@ -69,14 +69,14 @@ func (c *OCFScheduler) ScheduleCall(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.ScheduleCall().")
 }
 
-func (c *OCFScheduler) Calls(args []string) {
+func (c *OCFScheduler) Calls(services *core.Services, args []string) {
 	/* Inputs */
-	space_guid := ""
-	page := "false"
+	//space_guid := ""
+	//page := "false"
 	/* API */
-	method := "GET"
-	headers := "Accept: application/json"
-	path := fmt.Sprintf("/calls", space_guid)
+	//method := "GET"
+	//headers := "Accept: application/json"
+	//path := fmt.Sprintf("/calls", space_guid)
 
 	/* Reponses
 	200 Response
@@ -114,13 +114,13 @@ func (c *OCFScheduler) Calls(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.Calls().")
 }
 
-func (c *OCFScheduler) CallSchedules(args []string) {
+func (c *OCFScheduler) CallSchedules(services *core.Services, args []string) {
 	/* Inputs */
-	call_guid := ""
-	page := "false"
+	//call_guid := ""
+	//page := "false"
 	/* API */
-	method := "GET"
-	path := fmt.Sprintf("/calls/%s/schedules",call_guid)
+	//method := "GET"
+	//path := fmt.Sprintf("/calls/%s/schedules", call_guid)
 
 	/* Reponses
 	200 Response
@@ -160,13 +160,13 @@ func (c *OCFScheduler) CallSchedules(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.CallSchedules().")
 }
 
-func (c *OCFScheduler) CallHistory(args []string) {
+func (c *OCFScheduler) CallHistory(services *core.Services, args []string) {
 	/* Inputs */
-	call_guid := ""
+	//call_guid := ""
 	/* API */
-	method := "GET"
-	headers := "-H 'Accept: application/json'"
-	path := fmt.Sprintf("/calls/%s/history", call_guid)
+	//method := "GET"
+	//headers := "-H 'Accept: application/json'"
+	//path := fmt.Sprintf("/calls/%s/history", call_guid)
 	/* Reponses
 	200 Response
 	{
@@ -204,12 +204,12 @@ func (c *OCFScheduler) CallHistory(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.CallHistory().")
 }
 
-func (c *OCFScheduler) DeleteCall(args []string) {
+func (c *OCFScheduler) DeleteCall(services *core.Services, args []string) {
 	/* Inputs */
-	call_guid := ""
+	//call_guid := ""
 	/* API */
-	method := "DELETE"
-	path := fmt.Sprintf("/calls/%s",call_guid)
+	//method := "DELETE"
+	//path := fmt.Sprintf("/calls/%s", call_guid)
 	/* Reponses
 	204 - No Content
 	401 - Unauthorized
@@ -218,12 +218,12 @@ func (c *OCFScheduler) DeleteCall(args []string) {
 	fmt.Println("TODO: Implement OCFScheduler.DeleteCall().")
 }
 
-func (c *OCFScheduler) DeleteCallSchedule(args []string) {
+func (c *OCFScheduler) DeleteCallSchedule(services *core.Services, args []string) {
 	/* Inputs */
-	call_guid := ""
-	schedule_guid :=""
+	//call_guid := ""
+	//schedule_guid := ""
 	/* API */
-	path := fmt.Sprintf("/calls/%s/schedules/%s", job_guid, schedule_guid)
+	//path := fmt.Sprintf("/calls/%s/schedules/%s", job_guid, schedule_guid)
 	/* Reponses
 	204 - No Content
 	401 - Unauthorized
@@ -231,4 +231,3 @@ func (c *OCFScheduler) DeleteCallSchedule(args []string) {
 	*/
 	fmt.Println("TODO: Implement OCFScheduler.DeleteCallSchedule().")
 }
-
