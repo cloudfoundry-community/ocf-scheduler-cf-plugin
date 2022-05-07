@@ -1,6 +1,9 @@
 package core
 
 import (
+	"crypto/tls"
+	"net/http"
+
 	"github.com/ess/hype"
 )
 
@@ -16,6 +19,9 @@ type Driver struct {
 var Client *Driver
 
 func NewDriver(baseURL string, token string) (*Driver, error) {
+	// TODO: figure out how to make this configurable
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
 	raw, err := hype.New(baseURL)
 	if err != nil {
 		return nil, err
