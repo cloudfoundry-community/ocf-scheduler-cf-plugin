@@ -1,11 +1,15 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"strings"
 
 	"code.cloudfoundry.org/cli/plugin"
+	models "code.cloudfoundry.org/cli/plugin/models"
+	"github.com/ess/hype"
+	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
 )
 
 func GetBearer(cli plugin.CliConnection) (string, error) {
@@ -51,4 +55,61 @@ func GetScheduler(cli plugin.CliConnection) (string, error) {
 	u.Host = strings.Join(parts, ".")
 
 	return u.String(), nil
+}
+
+func MySpace(services *Services) (models.SpaceFields, error) {
+	space, err := services.CLI.GetCurrentSpace()
+	if err != nil {
+		return models.SpaceFields{}, err
+	}
+
+	return space.SpaceFields, nil
+}
+
+func AllJobs(services *Services, space models.SpaceFields) ([]*scheduler.Job, error) {
+	output := make([]*scheduler.Job, 0)
+
+	params := hype.Params{}
+	params.Set("space_guid", space.Guid)
+
+	response := services.Client.Get("jobs", params)
+	if !response.Okay() {
+		return output, response.Error()
+	}
+
+	data := struct {
+		Resources []*scheduler.Job `json:"resources"`
+	}{}
+
+	err := json.Unmarshal(response.Data(), &data)
+	if err != nil {
+		return output, err
+	}
+
+	return data.Resources, nil
+}
+
+func JobNamed(services *Services, space models.SpaceFields, name string) (*scheduler.Job, error) {
+	all, err := AllJobs(services, space)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, candidate := range all {
+		if candidate.Name == name {
+			return candidate, nil
+		}
+	}
+
+	return nil, fmt.Errorf("could not find job named %s", name)
+}
+
+func ExecuteJob(services *Services, job *scheduler.Job) error {
+	response := services.Client.Post("jobs/"+job.GUID+"/execute", nil, nil)
+
+	if !response.Okay() {
+		return response.Error()
+	}
+
+	return nil
 }

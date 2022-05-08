@@ -68,18 +68,31 @@ func (c *OCFScheduler) CreateJob(services *core.Services, args []string) {
 
 // cf run-job NAME
 func (c *OCFScheduler) RunJob(services *core.Services, args []string) {
-	/* API Call */
-	// ok,err := if HasSpace() {
-	//space_guid := "" //GetSpace()???
-	//method := "GET"
-	//path := fmt.Sprintf("jobs?space_guid=%s", space_guid)
-	//headers := "-H 'Accept: application/json'"
+	if len(args) != 2 {
+		fmt.Println("cf run-job NAME")
+		return
+	}
 
-	//Loop over response entries and print out.
-	//TODO: --json output support
-	/* Responses
-	 */
-	fmt.Println("TODO: Implement OCFScheduler.RunJob().")
+	space, err := core.MySpace(services)
+	if err != nil {
+		fmt.Println("Could not get current space.")
+		return
+	}
+
+	name := args[1]
+
+	job, err := core.JobNamed(services, space, name)
+	if err != nil {
+		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
+		return
+	}
+
+	if core.ExecuteJob(services, job) != nil {
+		fmt.Printf("Could not execute job %s.\n", job.Name)
+		return
+	}
+
+	fmt.Println("OK")
 }
 
 // cf schedule-job GUID SCHEDULE
@@ -103,36 +116,20 @@ func (c *OCFScheduler) ScheduleJob(services *core.Services, args []string) {
 
 // cf jobs
 func (c *OCFScheduler) Jobs(services *core.Services, args []string) {
-	space, err := services.CLI.GetCurrentSpace()
+	space, err := core.MySpace(services)
 	if err != nil {
-		fmt.Println("Could not get current Space.")
+		fmt.Println("Could not get current space.")
 		return
 	}
 
-	spaceGUID := space.SpaceFields.Guid
-
-	params := hype.Params{}
-	params.Set("space_guid", spaceGUID)
-
-	response := services.Client.Get("jobs", params)
-
-	if !response.Okay() {
-		fmt.Println("Got a bad response from the Scheduler API.")
-		return
-	}
-
-	data := struct {
-		Resources []*scheduler.Job `json:"resources"`
-	}{}
-
-	err = json.Unmarshal(response.Data(), &data)
+	jobs, err := core.AllJobs(services, space)
 	if err != nil {
-		fmt.Println("Could not decode Scheduler API response.")
+		fmt.Printf("Could not get jobs for space %s.\n", space.Name)
 		return
 	}
 
-	fmt.Printf("Jobs for Space %s:\n\n", space.SpaceFields.Name)
-	for _, job := range data.Resources {
+	fmt.Printf("Jobs for Space %s:\n\n", space.Name)
+	for _, job := range jobs {
 		fmt.Printf("\t%s (%s)\n", job.Name, job.GUID)
 	}
 }
