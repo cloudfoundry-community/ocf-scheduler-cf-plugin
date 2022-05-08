@@ -32,7 +32,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "schedule-job",
 				HelpText: "Schedules the named job (task) to run based on the given cron schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "schedule-job:\n\tcf schedule-job GUID SCHEDULE\n\nWHERE\n\tGUID is the guid of the created job\n\tSCHEDULE is the cron schedule format \"MIN HOUR DAY-OF-MONTH DAY-OF-WEEK\"",
+					Usage: "schedule-job:\n\tcf schedule-job JOB-NAME CRON-EXPRESSION\n\nWHERE\n\tJOB-NAME is the name of the created job\n\tCRON-EXPRESSION is the cron schedule format \"MIN HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"",
 				},
 			},
 			{

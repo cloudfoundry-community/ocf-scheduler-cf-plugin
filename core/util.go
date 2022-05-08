@@ -113,3 +113,37 @@ func ExecuteJob(services *Services, job *scheduler.Job) error {
 
 	return nil
 }
+
+type schedulePayload struct {
+	Enabled        bool   `json:"enabled"`
+	Expression     string `json:"expression"`
+	ExpressionType string `json:"expression_type"`
+}
+
+func ScheduleJob(services *Services, job *scheduler.Job, expression string) (*scheduler.Schedule, error) {
+	schedule := &schedulePayload{
+		Enabled:        true,
+		Expression:     expression,
+		ExpressionType: "cron_expression",
+	}
+
+	sdata, err := json.Marshal(schedule)
+	if err != nil {
+		return nil, err
+	}
+
+	response := services.Client.Post("jobs/"+job.GUID+"/schedules", nil, sdata)
+
+	if !response.Okay() {
+		return nil, response.Error()
+	}
+
+	output := &scheduler.Schedule{}
+
+	err = json.Unmarshal(response.Data(), output)
+	if err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
