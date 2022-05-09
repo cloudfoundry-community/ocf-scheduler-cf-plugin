@@ -52,7 +52,7 @@ func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Ex
 }
 
 func ListJobSchedules(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Schedule, error) {
-	response := core.Client.Get("jobs/"+job.GUID+"/schedules", nil)
+	response := driver.Get("jobs/"+job.GUID+"/schedules", nil)
 	if !response.Okay() {
 		return nil, response.Error()
 	}
