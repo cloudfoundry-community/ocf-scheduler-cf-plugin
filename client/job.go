@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
 	"github.com/ess/hype"
@@ -32,6 +33,7 @@ func ListJobs(driver *core.Driver, space models.SpaceFields) ([]*scheduler.Job, 
 }
 
 func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Execution, error) {
+	fmt.Println("DEBUG: trying to get executions for job", job.Name, "with guid", job.GUID)
 	response := driver.Get("jobs/"+job.GUID+"/history", nil)
 	if !response.Okay() {
 		return nil, response.Error()
