@@ -105,6 +105,8 @@ func CreateCall(driver *core.Driver, appGUID, name, url string) (*scheduler.Call
 	input := &scheduler.Call{
 		Name: name,
 		URL:  url,
+		// TODO: Figure out what this should actually be.
+		AuthHeader: "default",
 	}
 
 	data, err := json.Marshal(input)
