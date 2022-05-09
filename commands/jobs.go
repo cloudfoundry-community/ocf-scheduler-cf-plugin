@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
@@ -14,7 +15,7 @@ func Jobs(services *core.Services, args []string) {
 		return
 	}
 
-	jobs, err := core.AllJobs(services, space)
+	jobs, err := client.ListJobs(services.Client, space)
 	if err != nil {
 		fmt.Printf("Could not get jobs for space %s.\n", space.Name)
 		return

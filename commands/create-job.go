@@ -1,17 +1,14 @@
 package commands
 
 import (
-	"encoding/json"
 	"fmt"
 
-	"github.com/ess/hype"
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
-	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
 )
 
 // cf create-job APP_NAME NAME COMMAND
 func CreateJob(services *core.Services, args []string) {
-
 	if len(args) != 4 {
 		fmt.Println("cf create-job APP_NAME NAME COMMAND")
 		return
@@ -27,28 +24,7 @@ func CreateJob(services *core.Services, args []string) {
 		return
 	}
 
-	params := hype.Params{}
-	params.Set("app_guid", app.Guid)
-
-	payload := &scheduler.Job{
-		Name:    name,
-		Command: command,
-	}
-
-	data, err := json.Marshal(payload)
-	if err != nil {
-		fmt.Println("Could not prepare the request payload")
-		return
-	}
-
-	response := services.Client.Post("jobs", params, data)
-
-	if !response.Okay() {
-		fmt.Println(response.Error())
-		return
-	}
-
-	err = json.Unmarshal(response.Data(), payload)
+	payload, err := client.CreateJob(services.Client, app.Guid, name, command)
 	if err != nil {
 		fmt.Println(err)
 		return

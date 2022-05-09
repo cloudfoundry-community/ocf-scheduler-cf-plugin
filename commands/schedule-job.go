@@ -5,13 +5,14 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf schedule-job JOB-NAME SCHEDULE
+// cf schedule-job NAME SCHEDULE
 func ScheduleJob(services *core.Services, args []string) {
 	if len(args) != 3 {
-		fmt.Println("cf schedule-job JOB-NAME CRON-EXPRESSION")
+		fmt.Println("cf schedule-job NAME SCHEDULE")
 		return
 	}
 
@@ -21,17 +22,18 @@ func ScheduleJob(services *core.Services, args []string) {
 		return
 	}
 
-	jobName := args[1]
+	name := args[1]
 	cronExpression := args[2]
-	job, err := core.JobNamed(services, space, jobName)
+
+	job, err := client.JobNamed(services.Client, space, name)
 	if err != nil {
-		fmt.Printf("Could not find job named %s in space %s.\n", jobName, space.Name)
+		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
 		return
 	}
 
-	schedule, err := core.ScheduleJob(services, job, cronExpression)
+	schedule, err := client.ScheduleJob(services.Client, job, cronExpression)
 	if err != nil {
-		fmt.Printf("Could not schedule job %s with the expression %s.\n", jobName, cronExpression)
+		fmt.Printf("Could not schedule job %s with the expression %s.\n", name, cronExpression)
 		return
 	}
 
