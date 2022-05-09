@@ -5,6 +5,7 @@ import (
 
 	"code.cloudfoundry.org/cli/plugin"
 
+	"github.com/starkandwayne/ocf-scheduler-cf-plugin/commands"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
@@ -153,52 +154,52 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	switch args[0] {
 	case "create-job":
-		c.CreateJob(services, args)
+		commands.CreateJob(services, args)
 
 	case "run-job":
-		c.RunJob(services, args)
+		commands.RunJob(services, args)
 
 	case "schedule-job":
-		c.ScheduleJob(services, args)
+		commands.ScheduleJob(services, args)
 
 	case "jobs":
-		c.Jobs(services, args)
+		commands.Jobs(services, args)
 
 	case "job-schedules":
-		c.JobSchedules(services, args)
+		commands.JobSchedules(services, args)
 
 	case "job-history":
-		c.JobHistory(services, args)
+		commands.JobHistory(services, args)
 
 	case "delete-job":
-		c.DeleteJob(services, args)
+		commands.DeleteJob(services, args)
 
 	case "delete-job-schedule":
-		c.DeleteJobSchedule(services, args)
+		commands.DeleteJobSchedule(services, args)
 
 	case "create-call":
-		c.CreateCall(services, args)
+		commands.CreateCall(services, args)
 
 	case "run-call":
-		c.RunCall(services, args)
+		commands.RunCall(services, args)
 
 	case "schedule-call":
-		c.ScheduleCall(services, args)
+		commands.ScheduleCall(services, args)
 
 	case "calls":
-		c.Calls(services, args)
+		commands.Calls(services, args)
 
 	case "call-schedules":
-		c.CallSchedules(services, args)
+		commands.CallSchedules(services, args)
 
 	case "call-history":
-		c.CallHistory(services, args)
+		commands.CallHistory(services, args)
 
 	case "delete-call":
-		c.DeleteCall(services, args)
+		commands.DeleteCall(services, args)
 
 	case "delete-call-schedule":
-		c.DeleteCallSchedule(services, args)
+		commands.DeleteCallSchedule(services, args)
 	}
 }
 
