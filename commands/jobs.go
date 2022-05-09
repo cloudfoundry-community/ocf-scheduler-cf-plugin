@@ -46,7 +46,7 @@ func listJobs(services *core.Services) error {
 
 	for _, job := range jobs {
 		appName := "**UNKNOWN**"
-		if app, err := core.AppByGUID(apps, job.AppGUID); err != nil {
+		if app, err := core.AppByGUID(apps, job.AppGUID); err == nil {
 			appName = app.Name
 		}
 
