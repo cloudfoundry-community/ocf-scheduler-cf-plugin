@@ -30,7 +30,7 @@ func JobHistory(services *core.Services, args []string) {
 		return
 	}
 
-	executions, _ := client.ListJobExecutions(core.Client, job)
+	executions, _ := client.ListJobExecutions(services.Client, job)
 	if len(executions) == 0 {
 		fmt.Printf("No executions for job %s.\n" + name)
 		return
