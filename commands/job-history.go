@@ -9,10 +9,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf job-history NAME
+// cf job-history JOB-NAME
 func JobHistory(services *core.Services, args []string) {
 	if len(args) != 2 {
-		fmt.Println("cf job-history NAME")
+		fmt.Println("cf job-history JOB-NAME")
 		return
 	}
 

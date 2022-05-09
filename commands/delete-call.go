@@ -7,10 +7,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf delete-call NAME
+// cf delete-call CALL-NAME
 func DeleteCall(services *core.Services, args []string) {
 	if len(args) != 2 {
-		fmt.Println("cf delete-call NAME")
+		fmt.Println("cf delete-call CALL-NAME")
 		return
 	}
 

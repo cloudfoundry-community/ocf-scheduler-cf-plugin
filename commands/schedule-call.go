@@ -9,10 +9,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf schedule-call NAME SCHEDULE
+// cf schedule-call CALL-NAME SCHEDULE
 func ScheduleCall(services *core.Services, args []string) {
 	if len(args) != 2 {
-		fmt.Println("cf schedule-call NAME SCHEDULE")
+		fmt.Println("cf schedule-call CALL-NAME SCHEDULE")
 		return
 	}
 

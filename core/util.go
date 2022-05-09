@@ -62,3 +62,43 @@ func MySpace(services *Services) (models.SpaceFields, error) {
 
 	return space.SpaceFields, nil
 }
+
+type CommandLineContext struct {
+	Organization string
+	Space        string
+	Email        string
+}
+
+func GetCurrentContext(services *Services) (*CommandLineContext, error) {
+	organization, err := services.CLI.GetCurrentOrg()
+	if err != nil {
+		return nil, err
+	}
+
+	space, err := services.CLI.GetCurrentSpace()
+	if err != nil {
+		return nil, err
+	}
+
+	email, err := services.CLI.UserEmail()
+	if err != nil {
+		return nil, err
+	}
+
+	return &CommandLineContext{
+		Organization: organization.Name,
+		Space:        space.Name,
+		Email:        email,
+	}, nil
+}
+
+func PrintActionInProgress(services *Services, message string, args ...interface{}) error {
+	cliContext, err := GetCurrentContext(services)
+	if err != nil {
+		return err
+	}
+
+	action := fmt.Sprintf(message, args...)
+	fmt.Printf("%s in org %s / space %s as %s...\n", action, cliContext.Organization, cliContext.Space, cliContext.Email)
+	return nil
+}
