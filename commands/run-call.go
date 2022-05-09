@@ -7,10 +7,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf run-call NAME
+// cf run-call CALL-NAME
 func RunCall(services *core.Services, args []string) {
 	if len(args) != 2 {
-		fmt.Println("cf run-call NAME")
+		fmt.Println("cf run-call CALL-NAME")
 		return
 	}
 

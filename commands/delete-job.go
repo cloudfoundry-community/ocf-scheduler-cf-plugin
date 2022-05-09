@@ -7,10 +7,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf delete-job NAME
+// cf delete-job JOB-NAME
 func DeleteJob(services *core.Services, args []string) {
 	if len(args) != 2 {
-		fmt.Println("cf delete-job NAME")
+		fmt.Println("cf delete-job JOB-NAME")
 		return
 	}
 

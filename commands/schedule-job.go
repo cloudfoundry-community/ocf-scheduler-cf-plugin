@@ -9,10 +9,10 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf schedule-job NAME SCHEDULE
+// cf schedule-job JOB-NAME CRON-EXPRESSION
 func ScheduleJob(services *core.Services, args []string) {
 	if len(args) != 3 {
-		fmt.Println("cf schedule-job NAME SCHEDULE")
+		fmt.Println("cf schedule-job JOB-NAME CRON-EXPRESSION")
 		return
 	}
 

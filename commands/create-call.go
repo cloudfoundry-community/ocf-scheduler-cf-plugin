@@ -7,27 +7,35 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
-// cf create-call APP_NAME NAME URL
+// cf create-call APP-NAME CALL-NAME URL
 func CreateCall(services *core.Services, args []string) {
 	if len(args) != 4 {
-		fmt.Println("cf create-call APP_NAME NAME URL")
+		fmt.Println("cf create-call APP-NAME CALL-NAME URL")
 		return
 	}
 
-	appName := args[0]
-	name := args[1]
-	url := args[2]
+	if err := createCall(services, args[1], args[2], args[3]); err != nil {
+		fmt.Println("Error: " + err.Error())
+		return
+	}
+
+	fmt.Println("OK")
+}
+
+func createCall(services *core.Services, appName, callName, url string) error {
+	err := core.PrintActionInProgress(services, "Creating call %s for %s with url '%s'", callName, appName, url)
+	if err != nil {
+		return err
+	}
 
 	app, err := services.CLI.GetApp(appName)
 	if err != nil {
-		fmt.Println("Could not find app with name", appName)
-		return
+		return fmt.Errorf("could not find app with name %s", appName)
 	}
 
-	payload, err := client.CreateCall(services.Client, app.Guid, name, url)
+	payload, err := client.CreateCall(services.Client, app.Guid, callName, url)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 
 	fmt.Printf(
@@ -39,4 +47,6 @@ func CreateCall(services *core.Services, args []string) {
 		payload.URL,
 		payload.AuthHeader,
 	)
+
+	return nil
 }
