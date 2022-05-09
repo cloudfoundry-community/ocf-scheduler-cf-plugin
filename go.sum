@@ -1,0 +1,10 @@
+code.cloudfoundry.org/cli v7.1.0+incompatible h1:1Zn3I+epQBaBvnZAaTudCQQ0WdqcWtjtjEV9MBZP08Y=
+code.cloudfoundry.org/cli v7.1.0+incompatible/go.mod h1:e4d+EpbwevNhyTZKybrLlyTvpH+W22vMsmdmcTxs/Fo=
+github.com/ess/debuggable v1.0.0 h1:tMxRJ5kercQkPGa8uvtBou9gisaFgK+iURNSTFEjzdA=
+github.com/ess/debuggable v1.0.0/go.mod h1:xffN9MmBxD0x0wMIXAT7R+jUNZt33fV2v1d9i8v6aS8=
+github.com/ess/hype v1.1.4 h1:MPjCPx8lePPDgbgRDNXsTmbPEaZ2jETkLCyPQt4WdbQ=
+github.com/ess/hype v1.1.4/go.mod h1:InBwoV1C0c/amJlBisBAwf6bdTwuQY2DkJJNXynsjTE=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+github.com/starkandwayne/scheduler-for-ocf v0.0.5 h1:Ii3HhEQhxcep3FonXcoJ5uGW69P7jiQC4hr4XORuPkU=
+github.com/starkandwayne/scheduler-for-ocf v0.0.5/go.mod h1:EyU+PaiiCQaznYFi153OiGBB4opYpl6IQKrtXiptrVM=
