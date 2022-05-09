@@ -22,7 +22,7 @@ func JobHistory(services *core.Services, args []string) {
 		return
 	}
 
-	name := args[0]
+	name := args[1]
 
 	job, err := client.JobNamed(services.Client, space, name)
 	if err != nil {
