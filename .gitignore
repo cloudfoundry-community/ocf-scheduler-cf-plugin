@@ -1,3 +1,5 @@
 /ocf-scheduler-cf-plugin
 *~
 *.swp
+build-output
+.ssh-remote
