@@ -45,7 +45,7 @@ func callHistory(services *core.Services, args []string) error {
 	executions, _ := client.ListCallExecutions(services.Client, call)
 	count := len(executions)
 	if count == 0 {
-		fmt.Printf("No executions for call %s.\n" + name)
+		fmt.Printf("No executions for call %s.\n", name)
 		return nil
 	}
 

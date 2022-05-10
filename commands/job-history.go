@@ -45,7 +45,7 @@ func jobHistory(services *core.Services, args []string) error {
 	executions, _ := client.ListJobExecutions(services.Client, job)
 	count := len(executions)
 	if count == 0 {
-		fmt.Printf("No executions for job %s.\n" + name)
+		fmt.Printf("No executions for job %s.\n", name)
 		return nil
 	}
 
