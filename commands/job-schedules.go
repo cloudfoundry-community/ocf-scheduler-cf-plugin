@@ -61,7 +61,7 @@ func JobSchedules(services *core.Services, args []string) {
 
 			if output[appGUID] == nil {
 				output[appGUID] = []string{
-					"Job Name\tCommand\tSchedule\tExpression\n",
+					"Job Name\tCommand\tSchedule\tExpression",
 				}
 			}
 
@@ -69,7 +69,7 @@ func JobSchedules(services *core.Services, args []string) {
 				output[appGUID] = append(
 					output[appGUID],
 					fmt.Sprintf(
-						"%s\t%s\t%s\t%s\n",
+						"%s\t%s\t%s\t%s",
 						job.Name,
 						job.Command,
 						schedule.GUID,
