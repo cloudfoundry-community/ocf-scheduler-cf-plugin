@@ -94,6 +94,10 @@ func callSchedules(services *core.Services) error {
 		}
 
 		fmt.Printf("\nApp Name: %s\n", app.Name)
+		if len(output[appGUID]) == 0 {
+			fmt.Println("App", app.Name, "has calls, but none are scheduled.")
+			continue
+		}
 
 		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
 		for _, line := range output[appGUID] {

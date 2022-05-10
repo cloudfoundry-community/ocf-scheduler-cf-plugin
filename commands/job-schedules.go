@@ -95,6 +95,10 @@ func jobSchedules(services *core.Services) error {
 
 		fmt.Printf("\nApp Name: %s\n", app.Name)
 
+		if len(output[appGUID]) == 0 {
+			fmt.Println("App", app.Name, "has jobs, but none are scheduled.")
+		}
+
 		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
 		for _, line := range output[appGUID] {
 			fmt.Fprintln(writer, line)
