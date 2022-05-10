@@ -32,20 +32,6 @@ func ListJobs(driver *core.Driver, space models.SpaceFields) ([]*scheduler.Job, 
 	return data.Resources, nil
 }
 
-type byExecutionStart []*scheduler.Execution
-
-func (s byExecutionStart) Len() int {
-	return len(s)
-}
-
-func (s byExecutionStart) Swap(i int, j int) {
-	s[i], s[j] = s[j], s[i]
-}
-
-func (s byExecutionStart) Less(i int, j int) bool {
-	return s[i].ExecutionStartTime.Before(s[j].ExecutionStartTime)
-}
-
 func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Execution, error) {
 	response := driver.Get("jobs/"+job.GUID+"/history", nil)
 	if !response.Okay() {
@@ -64,7 +50,7 @@ func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Ex
 	executions := data.Resources
 
 	// Apparently, we only care about *scheduled* executions, not exeuctions
-	// from ad-hock job runs.
+	// from ad-hoc job runs.
 	scheduled := make([]*scheduler.Execution, 0)
 	for _, execution := range executions {
 		if !execution.ScheduledTime.IsZero() {
