@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
+	"sort"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
 	"github.com/ess/hype"
@@ -32,8 +32,21 @@ func ListJobs(driver *core.Driver, space models.SpaceFields) ([]*scheduler.Job, 
 	return data.Resources, nil
 }
 
+type byExecutionStart []*scheduler.Execution
+
+func (s byExecutionStart) Len() int {
+	return len(s)
+}
+
+func (s byExecutionStart) Swap(i int, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+
+func (s byExecutionStart) Less(i int, j int) bool {
+	return s[i].ExecutionStartTime.Before(s[j].ExecutionStartTime)
+}
+
 func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Execution, error) {
-	fmt.Println("DEBUG: trying to get executions for job", job.Name, "with guid", job.GUID)
 	response := driver.Get("jobs/"+job.GUID+"/history", nil)
 	if !response.Okay() {
 		return nil, response.Error()
@@ -47,6 +60,10 @@ func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Ex
 	if err != nil {
 		return nil, err
 	}
+
+	executions := data.Resources
+
+	sort.Sort(byExecutionStart(executions))
 
 	return data.Resources, nil
 }
