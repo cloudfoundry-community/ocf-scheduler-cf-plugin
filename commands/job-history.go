@@ -16,24 +16,35 @@ func JobHistory(services *core.Services, args []string) {
 		return
 	}
 
+	if err := jobHistory(services, args); err != nil {
+		fmt.Println("Error:", err.Error())
+		return
+	}
+
+	fmt.Println("OK")
+}
+
+func jobHistory(services *core.Services, args []string) error {
 	space, err := core.MySpace(services)
 	if err != nil {
-		fmt.Println("Could not get current space.")
-		return
+		return fmt.Errorf("Could not get current space.")
 	}
 
 	name := args[1]
 
 	job, err := client.JobNamed(services.Client, space, name)
 	if err != nil {
-		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
-		return
+		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
+	}
+
+	err = core.PrintActionInProgress(services, "Getting scheduled job history for %s", name)
+	if err != nil {
+		return err
 	}
 
 	executions, _ := client.ListJobExecutions(services.Client, job)
 	if len(executions) == 0 {
-		fmt.Printf("No executions for job %s.\n" + name)
-		return
+		return fmt.Errorf("No executions for job %s.\n" + name)
 	}
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
@@ -53,4 +64,5 @@ func JobHistory(services *core.Services, args []string) {
 	}
 
 	writer.Flush()
+	return nil
 }
