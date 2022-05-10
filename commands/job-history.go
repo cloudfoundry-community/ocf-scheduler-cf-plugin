@@ -43,9 +43,13 @@ func jobHistory(services *core.Services, args []string) error {
 	}
 
 	executions, _ := client.ListJobExecutions(services.Client, job)
-	if len(executions) == 0 {
-		return fmt.Errorf("No executions for job %s.\n" + name)
+	count := len(executions)
+	if count == 0 {
+		fmt.Printf("No executions for job %s.\n" + name)
+		return nil
 	}
+
+	fmt.Println("1 -", count, "of", count, "Total Results")
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
 	fmt.Fprintln(writer, "Execution GUID\tExecution State\tScheduled Time\tExecution Start Time\tExecution End Time\tExit Message")
