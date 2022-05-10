@@ -13,27 +13,36 @@ import (
 
 // cf job-schedules
 func JobSchedules(services *core.Services, args []string) {
-	// TODO: redesign this command such that it shows schedules for all jobs
-	// so as to match the upstream UX
+	if err := jobSchedules(services); err != nil {
+		fmt.Println("Error:", err.Error())
+		return
+	}
+
+	fmt.Println("OK")
+}
+
+func jobSchedules(services *core.Services) error {
 	space, err := core.MySpace(services)
 	if err != nil {
-		fmt.Println("Could not get current space.")
-		return
+		return fmt.Errorf("Could not get current space.")
 	}
 
 	// BEGIN REAL IMPLEMENTATION
 	output := make(map[string][]string)
 	allApps, err := core.MyApps(services)
 	if err != nil {
-		fmt.Print("Could not get apps.")
-		return
+		return fmt.Errorf("Could not get apps.")
 	}
 
 	appJobs := make(map[string][]*scheduler.Job)
 	allJobs, err := client.ListJobs(services.Client, space)
 	if err != nil {
-		fmt.Printf("Could not get jobs for space %s.\n", space.Name)
-		return
+		return fmt.Errorf("Could not get jobs for space %s.\n", space.Name)
+	}
+
+	err = core.PrintActionInProgress(services, "Getting scheduled jobs")
+	if err != nil {
+		return err
 	}
 
 	for _, job := range allJobs {
@@ -93,30 +102,5 @@ func JobSchedules(services *core.Services, args []string) {
 		writer.Flush()
 	}
 
-	fmt.Println("OK")
-	// END REAL IMPLEMENTATION
-
-	//name := args[1]
-
-	//job, err := client.JobNamed(services.Client, space, name)
-	//if err != nil {
-	//fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
-	//return
-	//}
-
-	//schedules, _ := client.ListJobSchedules(services.Client, job)
-	//if len(schedules) == 0 {
-	//fmt.Printf("No schedules for job %s.\n", name)
-	//return
-	//}
-
-	//writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
-	//fmt.Fprintln(writer, "Job Name\tSchedule\tWhen")
-	//fmt.Fprintln(writer, "=========\t========\t====")
-
-	//for _, schedule := range schedules {
-	//fmt.Fprintf(writer, "%s\t%s\t%s\n", job.Name, schedule.GUID, schedule.Expression)
-	//}
-
-	//writer.Flush()
+	return nil
 }
