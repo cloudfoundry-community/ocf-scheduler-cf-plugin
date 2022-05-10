@@ -63,9 +63,18 @@ func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Ex
 
 	executions := data.Resources
 
-	sort.Sort(byExecutionStart(executions))
+	// Apparently, we only care about *scheduled* executions, not exeuctions
+	// from ad-hock job runs.
+	scheduled := make([]*scheduler.Execution, 0)
+	for _, execution := range executions {
+		if !execution.ScheduledTime.IsZero() {
+			scheduled = append(scheduled, execution)
+		}
+	}
 
-	return data.Resources, nil
+	sort.Sort(byExecutionStart(scheduled))
+
+	return scheduled, nil
 }
 
 func ListJobSchedules(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Schedule, error) {
