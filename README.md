@@ -20,4 +20,5 @@ make install
 
 ## History
 
+* v0.0.2 - Now with a version (but not aversion)
 * v0.0.1 - Initial release

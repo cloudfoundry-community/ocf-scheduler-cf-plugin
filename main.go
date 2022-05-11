@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"code.cloudfoundry.org/cli/plugin"
 
@@ -9,11 +11,14 @@ import (
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
 )
 
+var Version string = "v0.0.0"
+
 type OCFScheduler struct{}
 
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
-		Name: "OCFScheduler",
+		Name:    "OCFScheduler",
+		Version: normalizeVersion(Version),
 		Commands: []plugin.Command{
 			{
 				Name:     "create-job",
@@ -205,4 +210,24 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 func main() {
 	plugin.Start(new(OCFScheduler))
+}
+
+func normalizeVersion(version string) plugin.VersionType {
+	if strings.ToLower(version)[0] == []byte("v")[0] {
+		version = version[1:]
+	}
+
+	mmb := strings.Split(version, ".")
+	if len(mmb) != 3 {
+		panic("invalid version: " + version)
+	}
+	major, _ := strconv.Atoi(mmb[0])
+	minor, _ := strconv.Atoi(mmb[1])
+	build, _ := strconv.Atoi(mmb[2])
+
+	return plugin.VersionType{
+		Major: major,
+		Minor: minor,
+		Build: build,
+	}
 }
