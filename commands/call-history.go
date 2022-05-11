@@ -74,6 +74,9 @@ func callHistory(services *core.Services, args []string) error {
 		)
 	}
 
+	fmt.Println("DEBUG ROWS")
+	fmt.Println(rows)
+
 	core.Table(rows)
 
 	return nil
