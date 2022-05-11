@@ -134,7 +134,7 @@ func Table(rows ...interface{}) {
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
 
-	fmt.Fprintf(writer, strings.Join(output, "\n"))
+	fmt.Fprintf(writer, "%s\n", strings.Join(output, "\n"))
 
 	writer.Flush()
 }
