@@ -38,14 +38,10 @@ func createJob(services *core.Services, appName, jobName, command string) error 
 		return err
 	}
 
-	fmt.Printf(
-		"Created job %s\n\tGUID: %s\n\tApp Name: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
-		payload.Name,
-		payload.GUID,
-		appName,
-		payload.AppGUID,
-		payload.SpaceGUID,
-		payload.Command,
+	// i'm going to refactor this after we make it work. be prepared.
+	core.Table(
+		[]string{"Job Name", "App Name", "Command"},
+		[]string{payload.Name, appName, payload.Command},
 	)
 
 	return nil
