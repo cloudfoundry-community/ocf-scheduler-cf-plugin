@@ -119,22 +119,29 @@ func PrintActionInProgress(services *Services, message string, args ...interface
 	return nil
 }
 
-func Table(rows ...interface{}) {
-	output := make([]string, 0)
+type Table struct {
+	rows   []string
+	writer *tabwriter.Writer
+}
 
-	for _, row := range rows {
-		if raw, isString := row.(string); isString {
-			output = append(output, raw)
-		}
-
-		if arr, isArray := row.([]string); isArray {
-			output = append(output, strings.Join(arr, "\t"))
-		}
+func NewTable() *Table {
+	return &Table{
+		rows:   make([]string, 0),
+		writer: tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0)),
 	}
+}
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
+func (t *Table) Add(row string) *Table {
+	t.rows = append(t.rows, row)
+	return t
+}
 
-	fmt.Fprintf(writer, "%s\n", strings.Join(output, "\n"))
+func (t *Table) AddArray(row []string) *Table {
+	t.rows = append(t.rows, strings.Join(row, "\t"))
+	return t
+}
 
-	writer.Flush()
+func (t *Table) Print() {
+	fmt.Fprintf(t.writer, "%s\n", strings.Join(t.rows, "\n"))
+	t.writer.Flush()
 }

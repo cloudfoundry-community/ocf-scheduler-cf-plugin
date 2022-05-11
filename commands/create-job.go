@@ -38,11 +38,11 @@ func createJob(services *core.Services, appName, jobName, command string) error 
 		return err
 	}
 
-	// i'm going to refactor this after we make it work. be prepared.
-	core.Table(
-		[]string{"Job Name", "App Name", "Command"},
-		[]string{payload.Name, appName, payload.Command},
-	)
+	core.
+		NewTable().
+		AddArray([]string{"Job Name", "App Name", "Command"}).
+		AddArray([]string{payload.Name, appName, payload.Command}).
+		Print()
 
 	return nil
 }

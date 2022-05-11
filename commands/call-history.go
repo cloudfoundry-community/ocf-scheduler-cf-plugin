@@ -49,7 +49,7 @@ func callHistory(services *core.Services, args []string) error {
 
 	fmt.Println("1 -", count, "of", count, "Total Results")
 
-	rows := [][]string{
+	output := core.NewTable().AddArray(
 		[]string{
 			"Execution GUID",
 			"Execution State",
@@ -58,11 +58,10 @@ func callHistory(services *core.Services, args []string) error {
 			"Execution End Time",
 			"Exit Message",
 		},
-	}
+	)
 
 	for _, execution := range executions {
-		rows = append(
-			rows,
+		output.AddArray(
 			[]string{
 				execution.GUID,
 				execution.State,
@@ -74,10 +73,7 @@ func callHistory(services *core.Services, args []string) error {
 		)
 	}
 
-	fmt.Println("DEBUG ROWS")
-	fmt.Println(rows)
-
-	core.Table(rows)
+	output.Print()
 
 	return nil
 }
