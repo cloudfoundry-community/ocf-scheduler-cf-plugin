@@ -20,7 +20,7 @@ func RunCall(services *core.Services, args []string) {
 		return
 	}
 
-	name := args[0]
+	name := args[1]
 
 	call, err := client.CallNamed(services.Client, space, name)
 	if err != nil {

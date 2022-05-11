@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"sort"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
 	"github.com/ess/hype"
@@ -46,7 +47,20 @@ func ListCallExecutions(driver *core.Driver, call *scheduler.Call) ([]*scheduler
 		return nil, err
 	}
 
-	return data.Resources, nil
+	executions := data.Resources
+
+	// Apparently, we only care about *scheduled* executions, not executions
+	// from ad-hoc call runs.
+	scheduled := make([]*scheduler.Execution, 0)
+	for _, execution := range executions {
+		if !execution.ScheduledTime.IsZero() {
+			scheduled = append(scheduled, execution)
+		}
+	}
+
+	sort.Sort(byExecutionStart(scheduled))
+
+	return scheduled, nil
 }
 
 func ListCallSchedules(driver *core.Driver, call *scheduler.Call) ([]*scheduler.Schedule, error) {
@@ -105,6 +119,8 @@ func CreateCall(driver *core.Driver, appGUID, name, url string) (*scheduler.Call
 	input := &scheduler.Call{
 		Name: name,
 		URL:  url,
+		// TODO: Figure out what this should actually be.
+		AuthHeader: "default",
 	}
 
 	data, err := json.Marshal(input)

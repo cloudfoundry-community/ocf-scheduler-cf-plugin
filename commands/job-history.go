@@ -16,39 +16,57 @@ func JobHistory(services *core.Services, args []string) {
 		return
 	}
 
-	space, err := core.MySpace(services)
-	if err != nil {
-		fmt.Println("Could not get current space.")
+	if err := jobHistory(services, args); err != nil {
+		fmt.Println("Error:", err.Error())
 		return
 	}
 
-	name := args[0]
+	fmt.Println("OK")
+}
+
+func jobHistory(services *core.Services, args []string) error {
+	space, err := core.MySpace(services)
+	if err != nil {
+		return fmt.Errorf("Could not get current space.")
+	}
+
+	name := args[1]
 
 	job, err := client.JobNamed(services.Client, space, name)
 	if err != nil {
-		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
-		return
+		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
 	}
 
-	executions, _ := client.ListJobExecutions(core.Client, job)
-	if len(executions) == 0 {
-		fmt.Printf("No executions for job %s.\n" + name)
-		return
+	err = core.PrintActionInProgress(services, "Getting scheduled job history for %s", name)
+	if err != nil {
+		return err
 	}
+
+	executions, _ := client.ListJobExecutions(services.Client, job)
+	count := len(executions)
+	if count == 0 {
+		fmt.Printf("No executions for job %s.\n", name)
+		return nil
+	}
+
+	fmt.Println("1 -", count, "of", count, "Total Results")
 
 	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
-	fmt.Fprintln(writer, "State\tStart Time\tEnd Time")
-	fmt.Fprintln(writer, "=====\t====================\t==================")
+	fmt.Fprintln(writer, "Execution GUID\tExecution State\tScheduled Time\tExecution Start Time\tExecution End Time\tExit Message")
 
 	for _, execution := range executions {
 		fmt.Fprintf(
 			writer,
-			"%s\t%s\t%s\n",
+			"%s\t%s\t%s\t%s\t%s\t%s\n",
+			execution.GUID,
 			execution.State,
+			execution.ScheduledTime,
 			execution.ExecutionStartTime,
 			execution.ExecutionEndTime,
+			execution.Message,
 		)
 	}
 
 	writer.Flush()
+	return nil
 }

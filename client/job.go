@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"sort"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
 	"github.com/ess/hype"
@@ -46,11 +47,24 @@ func ListJobExecutions(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Ex
 		return nil, err
 	}
 
-	return data.Resources, nil
+	executions := data.Resources
+
+	// Apparently, we only care about *scheduled* executions, not exeuctions
+	// from ad-hoc job runs.
+	scheduled := make([]*scheduler.Execution, 0)
+	for _, execution := range executions {
+		if !execution.ScheduledTime.IsZero() {
+			scheduled = append(scheduled, execution)
+		}
+	}
+
+	sort.Sort(byExecutionStart(scheduled))
+
+	return scheduled, nil
 }
 
 func ListJobSchedules(driver *core.Driver, job *scheduler.Job) ([]*scheduler.Schedule, error) {
-	response := core.Client.Get("jobs/"+job.GUID+"/schedules", nil)
+	response := driver.Get("jobs/"+job.GUID+"/schedules", nil)
 	if !response.Okay() {
 		return nil, response.Error()
 	}

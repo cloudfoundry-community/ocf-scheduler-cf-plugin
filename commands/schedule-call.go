@@ -11,7 +11,7 @@ import (
 
 // cf schedule-call CALL-NAME SCHEDULE
 func ScheduleCall(services *core.Services, args []string) {
-	if len(args) != 2 {
+	if len(args) != 3 {
 		fmt.Println("cf schedule-call CALL-NAME SCHEDULE")
 		return
 	}
@@ -22,8 +22,8 @@ func ScheduleCall(services *core.Services, args []string) {
 		return
 	}
 
-	name := args[0]
-	cronExpression := args[1]
+	name := args[1]
+	cronExpression := args[2]
 
 	call, err := client.CallNamed(services.Client, space, name)
 	if err != nil {

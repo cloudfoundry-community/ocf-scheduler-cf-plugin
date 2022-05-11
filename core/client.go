@@ -52,11 +52,12 @@ func (driver *Driver) Delete(path string, params hype.Params) hype.Response {
 }
 
 func (driver *Driver) Get(path string, params hype.Params) hype.Response {
-	return driver.
-		raw.
-		Get(path, params).
-		WithHeaderSet(driver.accept, driver.contentType, driver.auth).
-		Response()
+	raw := driver.raw
+	get := raw.Get(path, params)
+	withHeaders := get.WithHeaderSet(driver.accept, driver.contentType, driver.auth)
+	response := withHeaders.Response()
+
+	return response
 }
 
 func (driver *Driver) Post(path string, params hype.Params, data []byte) hype.Response {
