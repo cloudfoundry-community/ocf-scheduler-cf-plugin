@@ -3,7 +3,9 @@ package core
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"strings"
+	"text/tabwriter"
 
 	"code.cloudfoundry.org/cli/plugin"
 	models "code.cloudfoundry.org/cli/plugin/models"
@@ -115,4 +117,31 @@ func PrintActionInProgress(services *Services, message string, args ...interface
 	action := fmt.Sprintf(message, args...)
 	fmt.Printf("%s in org %s / space %s as %s...\n", action, cliContext.Organization, cliContext.Space, cliContext.Email)
 	return nil
+}
+
+type Table struct {
+	rows   []string
+	writer *tabwriter.Writer
+}
+
+func NewTable() *Table {
+	return &Table{
+		rows:   make([]string, 0),
+		writer: tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0)),
+	}
+}
+
+func (t *Table) AddRow(row string) *Table {
+	t.rows = append(t.rows, row)
+	return t
+}
+
+func (t *Table) Add(values ...string) *Table {
+	t.rows = append(t.rows, strings.Join(values, "\t"))
+	return t
+}
+
+func (t *Table) Print() {
+	fmt.Fprintf(t.writer, "%s\n", strings.Join(t.rows, "\n"))
+	t.writer.Flush()
 }

@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"text/tabwriter"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -39,8 +37,7 @@ func listCalls(services *core.Services) error {
 		return fmt.Errorf("Could not get calls for space %s.\n", space.Name)
 	}
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
-	fmt.Fprintln(writer, "Call Name\tApp Name\tURL")
+	table := core.NewTable().Add("Call Name", "App Name", "URL")
 
 	for _, call := range calls {
 		appName := "**UNKNOWN**"
@@ -48,9 +45,9 @@ func listCalls(services *core.Services) error {
 			appName = app.Name
 		}
 
-		fmt.Fprintf(writer, "%s\t%s\t%s\n", call.Name, appName, call.URL)
+		table.Add(call.Name, appName, call.URL)
 	}
 
-	writer.Flush()
+	table.Print()
 	return nil
 }

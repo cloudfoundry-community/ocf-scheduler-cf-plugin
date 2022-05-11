@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"text/tabwriter"
 
 	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
 
@@ -99,11 +97,13 @@ func callSchedules(services *core.Services) error {
 			continue
 		}
 
-		writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
+		table := core.NewTable()
+
 		for _, line := range output[appGUID] {
-			fmt.Fprintln(writer, line)
+			table.AddRow(line)
 		}
-		writer.Flush()
+
+		table.Print()
 	}
 
 	return nil

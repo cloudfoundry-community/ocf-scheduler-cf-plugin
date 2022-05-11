@@ -38,15 +38,11 @@ func createJob(services *core.Services, appName, jobName, command string) error 
 		return err
 	}
 
-	fmt.Printf(
-		"Created job %s\n\tGUID: %s\n\tApp Name: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tCommand: %s\n",
-		payload.Name,
-		payload.GUID,
-		appName,
-		payload.AppGUID,
-		payload.SpaceGUID,
-		payload.Command,
-	)
+	core.
+		NewTable().
+		Add("Job Name", "App Name", "Command").
+		Add(payload.Name, appName, payload.Command).
+		Print()
 
 	return nil
 }

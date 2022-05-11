@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"text/tabwriter"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -37,17 +35,9 @@ func ScheduleJob(services *core.Services, args []string) {
 		return
 	}
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
-	fmt.Fprintln(writer, "Job Name\tSchedule\tWhen")
-	fmt.Fprintln(writer, "========\t========\t====")
-
-	fmt.Fprintf(
-		writer,
-		"%s\t%s\t%s\n",
-		job.Name,
-		schedule.GUID,
-		schedule.Expression,
-	)
-
-	writer.Flush()
+	core.
+		NewTable().
+		Add("Job Name", "Schedule GUID", "Expression").
+		Add(job.Name, schedule.GUID, schedule.Expression).
+		Print()
 }

@@ -38,15 +38,11 @@ func createCall(services *core.Services, appName, callName, url string) error {
 		return err
 	}
 
-	fmt.Printf(
-		"Created call %s\n\tGUID: %s\n\tApp GUID: %s\n\tSpace GUID: %s\n\tURL: %s\n\tAuth Header: %s\n",
-		payload.Name,
-		payload.GUID,
-		payload.AppGUID,
-		payload.SpaceGUID,
-		payload.URL,
-		payload.AuthHeader,
-	)
+	core.
+		NewTable().
+		Add("Call Name", "App Name", "URL").
+		Add(payload.Name, appName, payload.URL).
+		Print()
 
 	return nil
 }

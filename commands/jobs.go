@@ -2,8 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
-	"text/tabwriter"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -41,8 +39,7 @@ func listJobs(services *core.Services) error {
 		return fmt.Errorf("Could not get jobs for space %s.\n", space.Name)
 	}
 
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
-	fmt.Fprintln(writer, "Job Name\tApp Name\tCommand")
+	table := core.NewTable().Add("Job Name", "App Name", "Command")
 
 	for _, job := range jobs {
 		appName := "**UNKNOWN**"
@@ -50,9 +47,9 @@ func listJobs(services *core.Services) error {
 			appName = app.Name
 		}
 
-		fmt.Fprintf(writer, "%s\t%s\t%s\n", job.Name, appName, job.Command)
+		table.Add(job.Name, appName, job.Command)
 	}
 
-	writer.Flush()
+	table.Print()
 	return nil
 }
