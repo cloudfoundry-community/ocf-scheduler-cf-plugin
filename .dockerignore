@@ -1,0 +1,8 @@
+.dockerignore
+.git
+.gitignore
+.ssh-remote
+*.md
+build-output
+Dockerfile
+Makefile

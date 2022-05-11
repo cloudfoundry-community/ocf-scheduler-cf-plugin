@@ -1,0 +1,6 @@
+.vscode
+*.swp
+build-output
+.ssh-remote
+*~
+ocf-scheduler-cf-plugin
