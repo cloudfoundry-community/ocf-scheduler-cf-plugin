@@ -1,3 +1,10 @@
+# This is how we want to name the binary output
+BINARY=ocf-scheduler-cf-plugin
+VERSION=`./scripts/genver`
+PACKAGE="github.com/starkandwayne/ocf-scheduler-cf-plugin"
+TARGET="builds/${BINARY}-${VERSION}"
+PREFIX="${TARGET}/${BINARY}-${VERSION}"
+
 GO_LDFLAGS := -ldflags="-X main.Version=$(VERSION)"
 
 REMOTE_HOST := $(shell cat .ssh-remote)
@@ -5,6 +12,24 @@ REMOTE_FOLDER := ~/programs/ocf-scheduler/ocf-scheduler-cf-plugin
 
 build:
 	go build $(GO_LDFLAGS) .
+
+release: distclean distbuild linux darwin
+
+distbuild:
+	mkdir -p ${TARGET}
+
+distclean:
+	rm -rf ${TARGET}
+
+linux:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-linux-amd64 ${PACKAGE}
+	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-linux-arm64 ${PACKAGE}
+
+darwin:
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-macos-amd64 ${PACKAGE}
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-macos-arm64 ${PACKAGE}
+	
+
 
 docker-build:
 	docker build -t ocf-scheduler-cf-plugin .
