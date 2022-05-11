@@ -41,7 +41,7 @@ func runCall(services *core.Services, args []string) error {
 	}
 
 	appName := "**UNKNOWN**"
-	if app, err := core.AppByGUID(apps, call.AppGUID); err != nil {
+	if app, err := core.AppByGUID(apps, call.AppGUID); err == nil {
 		appName = app.Name
 	}
 

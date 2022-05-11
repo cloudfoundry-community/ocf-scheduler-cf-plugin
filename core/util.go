@@ -71,9 +71,7 @@ func MyApps(services *Services) ([]models.GetAppsModel, error) {
 
 func AppByGUID(apps []models.GetAppsModel, guid string) (models.GetAppsModel, error) {
 	for _, app := range apps {
-		fmt.Println("DEBUG: checking actual GUID", app.Guid, "against expected GUID", guid)
 		if app.Guid == guid {
-			fmt.Println("DEBUG: FOUND!")
 			return app, nil
 		}
 	}

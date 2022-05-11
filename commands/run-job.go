@@ -40,9 +40,8 @@ func runJob(services *core.Services, args []string) error {
 		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
 	}
 
-	fmt.Println("DEBUG APP GUID:", job.AppGUID)
 	appName := "**UNKNOWN**"
-	if app, err := core.AppByGUID(apps, job.AppGUID); err != nil {
+	if app, err := core.AppByGUID(apps, job.AppGUID); err == nil {
 		appName = app.Name
 	}
 
