@@ -47,7 +47,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "job-schedules",
 				HelpText: "Lists created job schedules",
 				UsageDetails: plugin.Usage{
-					Usage: "job-schedules:\n\tcf job-schedules JOB-NAME",
+					Usage: "job-schedules:\n\tcf job-schedules",
 				},
 			},
 			{
