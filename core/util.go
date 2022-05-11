@@ -63,6 +63,20 @@ func MySpace(services *Services) (models.SpaceFields, error) {
 	return space.SpaceFields, nil
 }
 
+func MyApps(services *Services) ([]models.GetAppsModel, error) {
+	return services.CLI.GetApps()
+}
+
+func AppByGUID(apps []models.GetAppsModel, guid string) (models.GetAppsModel, error) {
+	for _, app := range apps {
+		if app.Guid == guid {
+			return app, nil
+		}
+	}
+
+	return models.GetAppsModel{}, fmt.Errorf("Could not find app with GUID %s", guid)
+}
+
 type CommandLineContext struct {
 	Organization string
 	Space        string

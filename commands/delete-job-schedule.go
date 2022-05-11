@@ -9,7 +9,7 @@ import (
 
 // cf delete-job-schedule JOB-NAME SCHEDULE-GUID
 func DeleteJobSchedule(services *core.Services, args []string) {
-	if len(args) != 4 {
+	if len(args) != 3 {
 		fmt.Println("cf delete-job-schedule JOB-NAME SCHEDULE-GUID")
 		return
 	}
@@ -20,8 +20,8 @@ func DeleteJobSchedule(services *core.Services, args []string) {
 		return
 	}
 
-	name := args[0]
-	scheduleGUID := args[1]
+	name := args[1]
+	scheduleGUID := args[2]
 
 	job, err := client.JobNamed(services.Client, space, name)
 	if err != nil {

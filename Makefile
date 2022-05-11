@@ -23,6 +23,9 @@ install:
 	cf uninstall-plugin OCFScheduler || true
 	yes | cf install-plugin ocf-scheduler-cf-plugin
 
+acceptance-tests:
+	go test -timeout 600s ./...
+
 all: build install
 
 run-remote: docker-build install-remote

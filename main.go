@@ -47,7 +47,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "job-schedules",
 				HelpText: "Lists created job schedules",
 				UsageDetails: plugin.Usage{
-					Usage: "job-schedules:\n\tcf job-schedules JOB-NAME",
+					Usage: "job-schedules:\n\tcf job-schedules",
 				},
 			},
 			{
@@ -100,10 +100,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				},
 			},
 			{
-				Name:     "call-schedules CALL-NAME",
+				Name:     "call-schedules",
 				HelpText: "List calls scheduled to be run with app and schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "call-schedules:\n\tcf call-schedules CALL-NAME",
+					Usage: "call-schedules:\n\tcf call-schedules",
 				},
 			},
 			{
