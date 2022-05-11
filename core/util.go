@@ -119,11 +119,22 @@ func PrintActionInProgress(services *Services, message string, args ...interface
 	return nil
 }
 
-func Table(rows ...[]string) {
-	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
+func Table(rows ...interface{}) {
+	output := make([]string, 0)
+
 	for _, row := range rows {
-		fmt.Fprintln(writer, strings.Join(row, "\t"))
+		if raw, isString := row.(string); isString {
+			output = append(output, raw)
+		}
+
+		if arr, isArray := row.([]string); isArray {
+			output = append(output, strings.Join(arr, "\t"))
+		}
 	}
+
+	writer := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', uint(0))
+
+	fmt.Fprintf(writer, strings.Join(output, "\n"))
 
 	writer.Flush()
 }
