@@ -40,8 +40,8 @@ func createJob(services *core.Services, appName, jobName, command string) error 
 
 	core.
 		NewTable().
-		AddArray([]string{"Job Name", "App Name", "Command"}).
-		AddArray([]string{payload.Name, appName, payload.Command}).
+		Add("Job Name", "App Name", "Command").
+		Add(payload.Name, appName, payload.Command).
 		Print()
 
 	return nil

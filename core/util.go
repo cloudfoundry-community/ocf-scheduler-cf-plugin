@@ -131,13 +131,13 @@ func NewTable() *Table {
 	}
 }
 
-func (t *Table) Add(row string) *Table {
+func (t *Table) AddRow(row string) *Table {
 	t.rows = append(t.rows, row)
 	return t
 }
 
-func (t *Table) AddArray(row []string) *Table {
-	t.rows = append(t.rows, strings.Join(row, "\t"))
+func (t *Table) Add(values ...string) *Table {
+	t.rows = append(t.rows, strings.Join(values, "\t"))
 	return t
 }
 
