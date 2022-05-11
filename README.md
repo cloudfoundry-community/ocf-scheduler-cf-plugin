@@ -17,3 +17,7 @@ make install
 ## References
 
 [CF Plugin API](https://github.com/cloudfoundry/cli/blob/master/plugin/plugin_examples/DOC.md) documentation
+
+## History
+
+* v0.0.1 - Initial release
