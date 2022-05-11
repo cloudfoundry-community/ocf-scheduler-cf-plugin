@@ -40,4 +40,6 @@ func RunCall(services *core.Services, args []string) {
 		call.GUID,
 		execution.GUID,
 	)
+
+	fmt.Println("OK")
 }

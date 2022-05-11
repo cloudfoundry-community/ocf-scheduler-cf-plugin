@@ -1,3 +1,4 @@
-/ocf-scheduler-cf-plugin
-*~
+.vscode
 *.swp
+*~
+/ocf-scheduler-cf-plugin
