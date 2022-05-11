@@ -14,32 +14,46 @@ func RunCall(services *core.Services, args []string) {
 		return
 	}
 
+	if err := runCall(services, args); err != nil {
+		fmt.Println("Error:", err.Error())
+		return
+	}
+
+	fmt.Println("OK")
+}
+
+func runCall(services *core.Services, args []string) error {
 	space, err := core.MySpace(services)
 	if err != nil {
-		fmt.Println("Could not get current space.")
-		return
+		return fmt.Errorf("Could not get current space.")
+	}
+
+	apps, err := core.MyApps(services)
+	if err != nil {
+		return fmt.Errorf("Could not get apps.")
 	}
 
 	name := args[1]
 
 	call, err := client.CallNamed(services.Client, space, name)
 	if err != nil {
-		fmt.Printf("Could not find call named %s in space %s.\n", name, space.Name)
-		return
+		return fmt.Errorf("Could not find call named %s in space %s.\n", name, space.Name)
 	}
 
-	execution, err := client.ExecuteCall(services.Client, call)
+	appName := "**UNKNOWN**"
+	if app, err := core.AppByGUID(apps, call.AppGUID); err != nil {
+		appName = app.Name
+	}
+
+	err = core.PrintActionInProgress(services, "Enqueuing call %s for app %s", call.Name, appName)
 	if err != nil {
-		fmt.Println("Could not execute call: " + err.Error())
-		return
+		return err
 	}
 
-	fmt.Printf(
-		"Executed call %s (%s) [Execution GUID: %s]\n",
-		call.Name,
-		call.GUID,
-		execution.GUID,
-	)
+	_, err = client.ExecuteCall(services.Client, call)
+	if err != nil {
+		return err
+	}
 
-	fmt.Println("OK")
+	return nil
 }
