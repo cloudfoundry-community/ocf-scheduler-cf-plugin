@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -41,11 +40,6 @@ func CreateJob(services *core.Services, args []string) {
 		fmt.Println("Error: Couldn't parse memory limit:", err.Error())
 		return
 	}
-
-	fmt.Println("disk:", diskInMb, "memory:", memoryInMb)
-	fmt.Println("args:", args)
-
-	os.Exit(0)
 
 	if len(args) != 4 {
 		fmt.Println("cf create-job APP-NAME JOB-NAME COMMAND")
