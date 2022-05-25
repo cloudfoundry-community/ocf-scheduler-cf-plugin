@@ -96,13 +96,15 @@ func JobNamed(driver *core.Driver, space models.SpaceFields, name string) (*sche
 	return nil, errors.New("no matching job found")
 }
 
-func CreateJob(driver *core.Driver, appGUID, name, command string) (*scheduler.Job, error) {
+func CreateJob(driver *core.Driver, appGUID, name, command string, diskInMb int, memoryInMb int) (*scheduler.Job, error) {
 	params := hype.Params{}
 	params.Set("app_guid", appGUID)
 
 	input := &scheduler.Job{
-		Name:    name,
-		Command: command,
+		Name:       name,
+		Command:    command,
+		DiskInMb:   diskInMb,
+		MemoryInMb: memoryInMb,
 	}
 
 	data, err := json.Marshal(input)
