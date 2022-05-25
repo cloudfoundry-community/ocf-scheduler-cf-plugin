@@ -24,7 +24,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
-					Usage: "create-job:\n\tcf create-job APP-NAME JOB-NAME COMMAND\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nTODO: --disk LIMIT/-k LIMIT set job(task) disk limit\n\tTODO: --memory LIMIT//-m LIMIT set the job(task) memory limit\n\tLIMIT is an integer suffixed with MB or GB.",
+					Usage: "create-job:\n\tcf create-job APP-NAME JOB-NAME COMMAND [OPTIONS]\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk LIMIT/-k LIMIT set job(task) disk limit (default 1024M)\n\t--memory LIMIT/-m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
 				},
 			},
 			{
