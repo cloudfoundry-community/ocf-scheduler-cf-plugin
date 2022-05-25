@@ -13,7 +13,7 @@ REMOTE_FOLDER := ~/programs/ocf-scheduler/ocf-scheduler-cf-plugin
 build:
 	go build $(GO_LDFLAGS) .
 
-release: distclean distbuild linux darwin
+release: distclean distbuild linux darwin windows
 
 distbuild:
 	mkdir -p ${TARGET}
@@ -28,6 +28,9 @@ linux:
 darwin:
 	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-macos-amd64 ${PACKAGE}
 	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-macos-arm64 ${PACKAGE}
+	
+windows:
+	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build ${GO_LDFLAGS} -o ${TARGET}/${BINARY}-windows-amd64.exe ${PACKAGE}
 	
 
 

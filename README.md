@@ -20,5 +20,6 @@ make install
 
 ## History
 
+* v0.0.3 - Now with Job disk/memory quotas
 * v0.0.2 - Now with a version (but not aversion)
 * v0.0.1 - Initial release
