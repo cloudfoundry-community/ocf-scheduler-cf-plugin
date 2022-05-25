@@ -9,6 +9,7 @@ require (
 	github.com/ess/hype v1.1.4
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.19.0
+	github.com/spf13/pflag v1.0.5
 	github.com/starkandwayne/scheduler-for-ocf v0.0.5
 )
 

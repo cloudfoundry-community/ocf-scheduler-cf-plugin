@@ -2,6 +2,9 @@ package commands
 
 import (
 	"fmt"
+	"os"
+
+	"github.com/spf13/pflag"
 
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
 	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
@@ -9,6 +12,19 @@ import (
 
 // cf create-job APP-NAME JOB-NAME COMMAND
 func CreateJob(services *core.Services, args []string) {
+	var diskInMb int
+	var memoryInMb int
+
+	flags := pflag.NewFlagSet("create-job", pflag.ExitOnError)
+	flags.IntVarP(&diskInMb, "disk", "k", 1024, "disk limit in MB")
+	flags.IntVarP(&memoryInMb, "memory", "m", 1024, "memory limit in MB")
+	flags.Parse(args)
+
+	fmt.Println("disk:", diskInMb, "memory:", memoryInMb)
+	fmt.Println("args:", args)
+
+	os.Exit(0)
+
 	if len(args) != 4 {
 		fmt.Println("cf create-job APP-NAME JOB-NAME COMMAND")
 		return
