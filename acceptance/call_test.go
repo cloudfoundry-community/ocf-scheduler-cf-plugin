@@ -23,7 +23,7 @@ var _ = Describe("Scheduler Calls", func() {
 	})
 
 	AfterEach(func() {
-		Expect(cf.Cf("delete-call", callName).Wait()).To(Exit(0))
+		Expect(cf.Cf("delete-call", callName).Wait(time.Second * 10)).To(Exit(0))
 	})
 
 	Describe("create-call", func() {

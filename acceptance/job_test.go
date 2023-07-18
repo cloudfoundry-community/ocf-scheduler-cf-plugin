@@ -23,7 +23,7 @@ var _ = Describe("Scheduler Jobs", func() {
 	})
 
 	AfterEach(func() {
-		Expect(cf.Cf("delete-job", jobName).Wait()).To(Exit(0))
+		Expect(cf.Cf("delete-job", jobName).Wait(time.Second * 10)).To(Exit(0))
 	})
 
 	Describe("create-job", func() {

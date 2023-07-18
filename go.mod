@@ -15,8 +15,8 @@ require (
 )
 
 require (
-	github.com/cloudfoundry-incubator/cf-test-helpers v1.0.0 // indirect
 	github.com/ess/debuggable v1.0.0 // indirect
+	github.com/ess/dry v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect

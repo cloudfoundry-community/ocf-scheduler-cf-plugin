@@ -28,9 +28,9 @@ var _ = BeforeSuite(func() {
 		"-m", "256M",
 		"-p", "assets/golang",
 		"-f", "assets/golang/manifest.yml",
-	).Wait(time.Second * 120)).To(Exit(0))
+	).Wait(time.Second * 600)).To(Exit(0))
 })
 
 var _ = AfterSuite(func() {
-	Expect(cf.Cf("delete", appName, "-f", "-r").Wait()).To(Exit(0))
+	Expect(cf.Cf("delete", appName, "-f", "-r").Wait(time.Second * 20)).To(Exit(0))
 })

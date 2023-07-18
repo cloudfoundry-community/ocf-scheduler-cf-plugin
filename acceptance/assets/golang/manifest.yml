@@ -2,3 +2,5 @@
 applications:
 - env:
     GOPACKAGENAME: go-online
+  buildpacks:
+  - go_buildpack
