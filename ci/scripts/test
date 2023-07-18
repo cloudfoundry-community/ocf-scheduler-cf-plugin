@@ -36,7 +36,8 @@ test -n "${VERSION}"          || bail "Version file (${VERSION_FROM}) was empty.
 cd "${REPO_ROOT}"
 
 header "Connecting to Cloud Foundry"
-cf login -a "${CF_API}" -u "${CF_USER}" -p "${CF_PASS}" --skip-ssl-validation
+cf api "${CF_API}" --skip-ssl-validation
+cf auth "${CF_USER}" "${CF_PASS}"
 cf create-org "${CF_ORG}"
 cf create-space -o "${CF_ORG}" "${CF_SPACE}"
 cf target -o "${CF_ORG}" -s "${CF_SPACE}"
