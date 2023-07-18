@@ -1,0 +1,59 @@
+#!/bin/bash
+# vim:et:ts=2:sts=2:sw=2
+set -ue
+
+# Resource Directories
+export ROOT_PATH="$(pwd)"
+export REPO_ROOT="${ROOT_PATH}/git"
+export BUILD_ROOT="${ROOT_PATH}/build"
+export CI_ROOT="${ROOT_PATH}/git-ci"
+export VERSION_FROM="${ROOT_PATH}/version/number"
+
+header() {
+	echo
+	echo "================================================================================"
+	echo "$1"
+	echo "--------------------------------------------------------------------------------"
+	echo
+}
+
+bail() {
+	echo >&2 "$*  Did you misconfigure Concourse?"
+	exit 2
+}
+test -n "${APP_NAME:-}" || bail "GIT_CI must be set to the path of the git repo containing the CI assets."
+test -n "${CF_API:-}"   || bail "CF_API must be set to the path of the git repo containing the CI assets."
+test -n "${CF_USER:-}"  || bail "CF_USER must be set to the path of the git repo containing the CI assets."
+test -n "${CF_PASS:-}"  || bail "CF_PASS must be set to the path of the git repo containing the CI assets."
+test -n "${CF_ORG:-}"   || bail "CF_ORG must be set to the path of the git repo containing the CI assets."
+test -n "${CF_SPACE:-}" || bail "CF_SPACE must be set to the path of the git repo containing the CI assets."
+
+test -f "${VERSION_FROM}"     || bail "Version file (${VERSION_FROM}) not found."
+VERSION=$(cat "${VERSION_FROM}")
+test -n "${VERSION}"          || bail "Version file (${VERSION_FROM}) was empty."
+
+# Enter repository path - everything is done in that context
+cd "${REPO_ROOT}"
+
+header "Connecting to Cloud Foundry"
+cf login -a "${CF_API}" -u "${CF_USER}" -p "${CF_PASS}" --skip-ssl-validation
+cf create-org "${CF_ORG}"
+cf create-space -o "${CF_ORG}" "${CF_SPACE}"
+cf target -o "${CF_ORG}" -s "${CF_SPACE}"
+
+header "Installing ${APP_NAME} v${VERSION}"
+cp "${BUILD_ROOT}/${APP_NAME}-${VERSION}-linux-amd64" "./${APP_NAME}"
+make install
+
+header "Performing Acceptance Tests"
+make acceptance-tests
+
+echo
+echo "================================================================================"
+if [ $((test_list || test_dashboard)) -eq 0 ] ; then
+  echo "SUCCESS!"
+  exit 0
+else
+  echo "FAILURE!"
+  exit 1
+fi
