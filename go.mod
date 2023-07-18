@@ -1,16 +1,16 @@
-module github.com/starkandwayne/ocf-scheduler-cf-plugin
+module github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
 
 go 1.18
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
+	github.com/cloudfoundry-community/ocf-scheduler v1.0.0
 	github.com/cloudfoundry/cf-acceptance-tests v1.9.1-0.20220405181007-a6e4d7ae3b33
 	github.com/cloudfoundry/cf-test-helpers v1.0.1-0.20220329060630-a1956dba8c6c
 	github.com/ess/hype v1.1.4
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.19.0
 	github.com/spf13/pflag v1.0.5
-	github.com/starkandwayne/scheduler-for-ocf v0.0.5
 	k8s.io/apimachinery v0.24.0
 )
 

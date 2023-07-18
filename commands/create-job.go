@@ -6,8 +6,8 @@ import (
 	"github.com/spf13/pflag"
 	"k8s.io/apimachinery/pkg/api/resource"
 
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/client"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 )
 
 func quotaInMb(quota string) (int, error) {

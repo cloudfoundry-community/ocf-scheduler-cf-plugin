@@ -8,7 +8,7 @@
 
 Clone the repo, build the binary, and install the plugin:
 ```
-git clone https://github.com/starkandwayne/ocf-scheduler-cf-plugin
+git clone https://github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
 cd ocf-sceduler-cf-plugin
 make
 make install

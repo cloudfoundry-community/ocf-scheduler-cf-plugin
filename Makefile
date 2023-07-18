@@ -1,7 +1,7 @@
 # This is how we want to name the binary output
 BINARY=ocf-scheduler-cf-plugin
 VERSION=`./scripts/genver`
-PACKAGE="github.com/starkandwayne/ocf-scheduler-cf-plugin"
+PACKAGE ?= github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
 TARGET="builds/${BINARY}-${VERSION}"
 PREFIX="${TARGET}/${BINARY}-${VERSION}"
 

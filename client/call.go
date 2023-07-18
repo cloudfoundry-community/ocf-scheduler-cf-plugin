@@ -7,8 +7,8 @@ import (
 
 	models "code.cloudfoundry.org/cli/plugin/models"
 	"github.com/ess/hype"
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
-	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
+	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
 )
 
 func ListCalls(driver *core.Driver, space models.SpaceFields) ([]*scheduler.Call, error) {

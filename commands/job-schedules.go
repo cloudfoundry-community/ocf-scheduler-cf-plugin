@@ -3,10 +3,10 @@ package commands
 import (
 	"fmt"
 
-	scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
+	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
 
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/client"
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/client"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 )
 
 // cf job-schedules

@@ -1,6 +1,6 @@
 package client
 
-import scheduler "github.com/starkandwayne/scheduler-for-ocf/core"
+import scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
 
 type byExecutionStart []*scheduler.Execution
 

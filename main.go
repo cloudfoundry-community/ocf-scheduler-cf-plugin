@@ -7,8 +7,8 @@ import (
 
 	"code.cloudfoundry.org/cli/plugin"
 
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/commands"
-	"github.com/starkandwayne/ocf-scheduler-cf-plugin/core"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/commands"
+	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 )
 
 var Version string = "v0.0.0"
