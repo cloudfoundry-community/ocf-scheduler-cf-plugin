@@ -18,9 +18,9 @@ outputs:
 
 params:
   GIT_CI:   git-ci
-  CF_API:   (( cloud-foundry.url ))
-  CF_USER:  (( cloud-foundry.username
-  CF_PASS:  (( cloud-foundry.password ))
+  CF_API:   ((cloud-foundry.url))
+  CF_USER:  ((cloud-foundry.username))
+  CF_PASS:  ((cloud-foundry.password))
   CF_ORG:   ci
   CF_SPACE: test
 

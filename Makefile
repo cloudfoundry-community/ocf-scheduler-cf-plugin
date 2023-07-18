@@ -11,7 +11,7 @@ PACKAGE=${MODULE}/${CMD_PATH}
 
 GO_LDFLAGS := -ldflags="-X main.Version=$(VERSION)"
 
-REMOTE_HOST := $(shell [[ -f .ssh-remote ]] && cat .ssh-remote || echo '')
+REMOTE_HOST := $(shell [ -f .ssh-remote ] && cat .ssh-remote || echo '')
 REMOTE_FOLDER := ~/programs/ocf-scheduler-cf-plugin/ocf-scheduler-cf-plugin
 
 build: clean

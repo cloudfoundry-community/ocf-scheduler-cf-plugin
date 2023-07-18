@@ -3,7 +3,7 @@ meta:
   name:    ocf-scheduler-cf-plugin
   release: OCF Scheduler CF Plugin
   target:  pipes/cloudfoundry-community
-  url:     https://pipes.scalecf.com
+  url:     https://pipes.scalecf.net
 
   initial_version: 1.0.0
 
@@ -15,6 +15,7 @@ meta:
     name:  ((github.name))
 
   aws:
+    bucket:     ocf-scheduler-pipeline
     access_key: ((aws.access_key_id))
     secret_key: ((aws.secret_access_key))
 
