@@ -1,5 +1,5 @@
 # This is how we want to name the binary output
-APP_NAME ?= scheduler
+APP_NAME ?= ocf-scheduler-cf-plugin
 VERSION ?= `./scripts/genver`-dev
 
 MODULE ?= github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
@@ -9,7 +9,8 @@ BUILD_PATH=builds
 BUILD=${APP_NAME}-${VERSION}
 PACKAGE=${MODULE}/${CMD_PATH}
 
-GO_LDFLAGS := -ldflags="-X main.Version=$(VERSION)"
+SHELL:=/bin/bash
+GO_LDFLAGS := $(shell echo "-ldflags='-X main.Version=$(VERSION)'" | sed -e 's/-rc./-rc/') #plugins can't have periods after rc in version
 
 REMOTE_HOST := $(shell [ -f .ssh-remote ] && cat .ssh-remote || echo '')
 REMOTE_FOLDER := ~/programs/ocf-scheduler-cf-plugin/ocf-scheduler-cf-plugin
@@ -35,8 +36,8 @@ linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-linux-arm64 ${PACKAGE}
 
 darwin:
-	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-macos-amd64 ${PACKAGE}
-	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-macos-arm64 ${PACKAGE}
+	CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-darwin-amd64 ${PACKAGE}
+	CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-darwin-arm64 ${PACKAGE}
 	
 windows:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build ${GO_LDFLAGS} -o ${BUILD_PATH}/${BUILD}-windows-amd64.exe ${PACKAGE}
