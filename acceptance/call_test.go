@@ -28,14 +28,18 @@ var _ = Describe("Scheduler Calls", func() {
 
 	Describe("create-call", func() {
 		It("test correct call creation", func() {
-			Expect(cf.Cf("create-call", appName, callName, `https://www.starkandwayne.com/`).
+			Expect(cf.Cf("create-call", appName, callName, `https://fivetwenty.io/`).
 				Wait(time.Second * 10)).To(Exit(0))
+
+			Expect(cf.Cf("calls").
+				Wait(time.Second * 1).Out.Contents()).
+				Should(ContainSubstring(callName))
 		})
 	})
 
 	Describe("schedule-call", func() {
 		It("test correct call scheduling", func() {
-			Expect(cf.Cf("create-call", appName, callName, `https://www.starkandwayne.com/`).
+			Expect(cf.Cf("create-call", appName, callName, `https://fivetwenty.io/`).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("schedule-call", callName, `15 * * * *`).
@@ -49,7 +53,7 @@ var _ = Describe("Scheduler Calls", func() {
 
 	Describe("run-call", func() {
 		It("test correct call manual execution", func() {
-			Expect(cf.Cf("create-call", appName, callName, `https://www.starkandwayne.com/`).
+			Expect(cf.Cf("create-call", appName, callName, `https://fivetwenty.io/`).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("run-call", callName).
@@ -60,7 +64,7 @@ var _ = Describe("Scheduler Calls", func() {
 
 	Describe("delete-call", func() {
 		It("test correct call deletion", func() {
-			Expect(cf.Cf("create-call", appName, callName, `https://www.starkandwayne.com/`).
+			Expect(cf.Cf("create-call", appName, callName, `https://fivetwenty.io/`).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("delete-call", callName).
@@ -78,7 +82,7 @@ var _ = Describe("Scheduler Calls", func() {
 
 	Describe("delete-call-schedule", func() {
 		It("test correct call schedule deletion", func() {
-			Expect(cf.Cf("create-call", appName, callName, `https://www.starkandwayne.com/`).
+			Expect(cf.Cf("create-call", appName, callName, `https://fivetwenty.io/`).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("schedule-call", callName, `15 * * * *`).
