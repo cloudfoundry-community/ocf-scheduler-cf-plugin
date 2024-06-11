@@ -43,7 +43,7 @@ func CreateJob(services *core.Services, args []string) {
 	}
 
 	if len(args) != 4 {
-		fmt.Println("cf create-job APP-NAME JOB-NAME COMMAND")
+		fmt.Println("cf create-job APP-NAME JOB-NAME COMMAND [OPTIONS]")
 		return
 	}
 

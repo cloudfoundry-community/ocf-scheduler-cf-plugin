@@ -66,14 +66,14 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-job",
 				HelpText: "Deletes named job.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job:\n\tcf delete-job JOB-NAME",
+					Usage: "delete-job:\n\tcf delete-job JOB-NAME [OPTIONS]\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-job-schedule",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-job-schedule JOB-NAME SCHEDULE-GUID",
+					Usage: "delete-job-schedule:\n\tcf delete-job-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -122,14 +122,14 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-call",
 				HelpText: "Deletes the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call:\n\tcf delete-call CALL-NAME",
+					Usage: "delete-call:\n\tcf delete-call CALL-NAME [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-call-schedule",
 				HelpText: "Delete a call scheduled with a given GUID",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call-schedule:\n\tcf delete-call-schedule CALL-NAME SCHEDULE-GUID",
+					Usage: "delete-call-schedule:\n\tcf delete-call-schedule CALL-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
 				},
 			},
 		},

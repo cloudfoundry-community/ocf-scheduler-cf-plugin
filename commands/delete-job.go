@@ -3,14 +3,23 @@ package commands
 import (
 	"fmt"
 
+	"github.com/spf13/pflag"
+
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/client"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 )
 
 // cf delete-job JOB-NAME
 func DeleteJob(services *core.Services, args []string) {
+    var forceFlag bool
+
+	flags := pflag.NewFlagSet("delete-job", pflag.ExitOnError)
+    flags.BoolVarP(&forceFlag, "force", "f", false, "Force job deletion without confirmation")
+	flags.Parse(args)
+	args = flags.Args()
+
 	if len(args) != 2 {
-		fmt.Println("cf delete-job JOB-NAME")
+		fmt.Println("cf delete-job JOB-NAME [OPTIONS]")
 		return
 	}
 
