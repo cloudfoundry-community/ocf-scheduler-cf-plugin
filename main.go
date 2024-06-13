@@ -1,11 +1,19 @@
 package main
 
 import (
+    "bytes"
 	"fmt"
+    "os"
+    "io"
+    "runtime"
 	"strconv"
 	"strings"
+    "text/template"
 
 	"code.cloudfoundry.org/cli/plugin"
+    "code.cloudfoundry.org/cli/cf/i18n"
+	"code.cloudfoundry.org/cli/cf/terminal"
+	"code.cloudfoundry.org/cli/cf/trace"
 
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/commands"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
@@ -14,6 +22,15 @@ import (
 var Version string = "v0.0.0"
 
 type OCFScheduler struct{}
+
+// Setup to use the cf cli ui prompts
+// CloudFoundry/cli/cf/i18n
+//    define the T function which is suppose to translate and process go templates
+//    define the teePrinter
+//    define the UI interface
+
+var teePrinter *terminal.TeePrinter
+var ui terminal.UI
 
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
@@ -137,6 +154,32 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 }
 
 func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
+
+    i18n.T = func(translationID string, args ...interface{}) string {
+        var buffer bytes.Buffer
+
+        var keys interface{}
+		if len(args) > 0 {
+			keys = args[0]
+		}
+
+		formattedTemplate := template.Must(template.New("Display Text").Parse(translationID))
+		err := formattedTemplate.Execute(&buffer, keys)
+		if err != nil {
+            return translationID + "\ntemplate processing failed " + err.Error() + "\n"
+		}
+
+		return buffer.String()
+	}
+
+    if runtime.GOOS == "windows" {
+		terminal.UserAskedForColors = "false"
+	}
+    terminal.InitColorSupport()
+    teePrinter = terminal.NewTeePrinter(os.Stdout)
+    // Should we really be using NewPluginUI instead TODO
+	ui = terminal.NewUI(os.Stdin, os.Stdout, teePrinter, trace.NewWriterPrinter(io.Discard, false))
+
 	scheduler, err := core.GetScheduler(cliConnection)
 	if err != nil {
 		fmt.Println(err)
@@ -155,7 +198,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 		return
 	}
 
-	services := &core.Services{CLI: cliConnection, Client: client}
+    services := &core.Services{CLI: cliConnection, Client: client, UI: ui}
 
 	switch args[0] {
 	case "create-job":

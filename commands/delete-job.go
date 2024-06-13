@@ -12,9 +12,12 @@ import (
 // cf delete-job JOB-NAME
 func DeleteJob(services *core.Services, args []string) {
     var forceFlag bool
+    var promptFlag bool
 
 	flags := pflag.NewFlagSet("delete-job", pflag.ExitOnError)
     flags.BoolVarP(&forceFlag, "force", "f", false, "Force job deletion without confirmation")
+    flags.BoolVarP(&promptFlag, "prompt", "p", false, "Allow job deletion with confirmation")
+    flags.MarkHidden("prompt")
 	flags.Parse(args)
 	args = flags.Args()
 
@@ -36,6 +39,10 @@ func DeleteJob(services *core.Services, args []string) {
 		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
 		return
 	}
+
+    if promptFlag && !forceFlag && !services.UI.ConfirmDeleteWithAssociations("job", name) {
+        return;
+    }
 
 	err = client.DeleteJob(services.Client, job)
 	if err != nil {

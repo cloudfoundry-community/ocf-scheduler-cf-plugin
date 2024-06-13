@@ -12,9 +12,12 @@ import (
 // cf delete-job-schedule JOB-NAME SCHEDULE-GUID
 func DeleteJobSchedule(services *core.Services, args []string) {
     var forceFlag bool
+    var promptFlag bool
 
 	flags := pflag.NewFlagSet("delete-job-schedule", pflag.ExitOnError)
     flags.BoolVarP(&forceFlag, "force", "f", false, "Force job schedule deletion without confirmation")
+    flags.BoolVarP(&promptFlag, "prompt", "p", false, "Allow job schedule deletion with confirmation")
+    flags.MarkHidden("prompt")
 	flags.Parse(args)
 
 	args = flags.Args()
@@ -37,6 +40,10 @@ func DeleteJobSchedule(services *core.Services, args []string) {
 		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
 		return
 	}
+
+    if promptFlag && !forceFlag && !services.UI.ConfirmDelete("job schedule", name + " " + scheduleGUID) {
+        return;
+    }
 
 	err = client.DeleteJobSchedule(services.Client, job, scheduleGUID)
 	if err != nil {
