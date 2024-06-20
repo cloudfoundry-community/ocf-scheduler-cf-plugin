@@ -5,3 +5,4 @@ build-output
 *~
 ocf-scheduler-cf-plugin
 builds
+.DS_Store

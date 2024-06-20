@@ -6,9 +6,9 @@ import (
 	"sort"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
-	"github.com/ess/hype"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
+	"github.com/ess/hype"
 )
 
 func ListCalls(driver *core.Driver, space models.SpaceFields) ([]*scheduler.Call, error) {

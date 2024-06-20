@@ -1,19 +1,19 @@
 package main
 
 import (
-    "bytes"
+	"bytes"
 	"fmt"
-    "os"
-    "io"
-    "runtime"
+	"io"
+	"os"
+	"runtime"
 	"strconv"
 	"strings"
-    "text/template"
+	"text/template"
 
-	"code.cloudfoundry.org/cli/plugin"
-    "code.cloudfoundry.org/cli/cf/i18n"
+	"code.cloudfoundry.org/cli/cf/i18n"
 	"code.cloudfoundry.org/cli/cf/terminal"
 	"code.cloudfoundry.org/cli/cf/trace"
+	"code.cloudfoundry.org/cli/plugin"
 
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/commands"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
@@ -155,10 +155,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 
 func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
-    i18n.T = func(translationID string, args ...interface{}) string {
-        var buffer bytes.Buffer
+	i18n.T = func(translationID string, args ...interface{}) string {
+		var buffer bytes.Buffer
 
-        var keys interface{}
+		var keys interface{}
 		if len(args) > 0 {
 			keys = args[0]
 		}
@@ -166,18 +166,18 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 		formattedTemplate := template.Must(template.New("Display Text").Parse(translationID))
 		err := formattedTemplate.Execute(&buffer, keys)
 		if err != nil {
-            return translationID + "\ntemplate processing failed " + err.Error() + "\n"
+			return translationID + "\ntemplate processing failed " + err.Error() + "\n"
 		}
 
 		return buffer.String()
 	}
 
-    if runtime.GOOS == "windows" {
+	if runtime.GOOS == "windows" {
 		terminal.UserAskedForColors = "false"
 	}
-    terminal.InitColorSupport()
-    teePrinter = terminal.NewTeePrinter(os.Stdout)
-    // Should we really be using NewPluginUI instead TODO
+	terminal.InitColorSupport()
+	teePrinter = terminal.NewTeePrinter(os.Stdout)
+	// Should we really be using NewPluginUI instead TODO
 	ui = terminal.NewUI(os.Stdin, os.Stdout, teePrinter, trace.NewWriterPrinter(io.Discard, false))
 
 	scheduler, err := core.GetScheduler(cliConnection)
@@ -198,7 +198,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 		return
 	}
 
-    services := &core.Services{CLI: cliConnection, Client: client, UI: ui}
+	services := &core.Services{CLI: cliConnection, Client: client, UI: ui}
 
 	switch args[0] {
 	case "create-job":

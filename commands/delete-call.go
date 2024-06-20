@@ -11,13 +11,13 @@ import (
 
 // cf delete-call CALL-NAME
 func DeleteCall(services *core.Services, args []string) {
-    var forceFlag bool
-    var promptFlag bool
+	var forceFlag bool
+	var promptFlag bool
 
 	flags := pflag.NewFlagSet("delete-call", pflag.ExitOnError)
-    flags.BoolVarP(&forceFlag, "force", "f", false, "Force call deletion without confirmation")
-    flags.BoolVarP(&promptFlag, "prompt", "p", false, "Allow call deletion with confirmation")
-    flags.MarkHidden("prompt")
+	flags.BoolVarP(&forceFlag, "force", "f", false, "Force call deletion without confirmation")
+	flags.BoolVarP(&promptFlag, "prompt", "p", false, "Allow call deletion with confirmation")
+	flags.MarkHidden("prompt")
 	flags.Parse(args)
 	args = flags.Args()
 
@@ -40,9 +40,9 @@ func DeleteCall(services *core.Services, args []string) {
 		return
 	}
 
-    if promptFlag && !forceFlag && !services.UI.ConfirmDeleteWithAssociations("call", name) {
-        return;
-    }
+	if promptFlag && !forceFlag && !services.UI.ConfirmDeleteWithAssociations("call", name) {
+		return
+	}
 
 	err = client.DeleteCall(services.Client, call)
 	if err != nil {

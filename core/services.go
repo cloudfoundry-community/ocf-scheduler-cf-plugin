@@ -6,5 +6,5 @@ import "code.cloudfoundry.org/cli/cf/terminal"
 type Services struct {
 	CLI    plugin.CliConnection
 	Client *Driver
-    UI     terminal.UI
+	UI     terminal.UI
 }
