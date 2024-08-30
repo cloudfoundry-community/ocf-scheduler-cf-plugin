@@ -70,7 +70,7 @@ build: clean
 	$(BUILD_RULE_CMD)
 
 clean:
-	@rm -f $(DEV_TEST_BUILD)
+	@rm -f $(DEV_TEST_BUILD) || true
 
 install: build
 	cf install-plugin $(DEV_TEST_BUILD) -f || true
@@ -119,7 +119,8 @@ endef
 $(foreach target,$(TARGETS), $(eval $(call build-target,$(word 1, $(subst /, ,$(target))),$(word 2, $(subst /, ,$(target))),$(SEMVER_BUILDMETA))))
 
 release-clean:
-	@rm -rf $(RELEASE_ROOT)/*
+	@rm -f $(RELEASE_ROOT)/$(PROJECT)-* || true
+	@[[ ! -d $(RELEASE_ROOT) ]] || rmdir -p $(RELEASE_ROOT)
 
 distclean: clean release-clean
 
