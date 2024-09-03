@@ -7,6 +7,10 @@ RELEASE_ROOT   ?=releases
 DEV_TEST_BUILD =./$(PROJECT)
 TARGETS        ?=linux/amd64 linux/arm64 darwin/amd64 darwin/arm64 windows/amd64
 
+define is_not_number 
+$(shell echo ${1} | sed -e 's/[0123456789]//g')
+endef
+
 ifneq ($(VERSION),)
 VERSION_SPLIT:=$(subst ., ,$(VERSION))
   ifneq ($(words $(VERSION_SPLIT)),3)
@@ -18,12 +22,15 @@ VERSION_SPLIT:=$(subst ., ,$(VERSION_TAG))
   ifneq ($(words $(VERSION_SPLIT)),3)
     $(error VERSION_TAG does not have 3 parts |$(words $(VERSION_SPLIT))|$(VERSION_TAG)|$(VERSION_SPLIT)|)
   endif
+
+  ifneq ($(words $(call is_not_number,$(word 3,$(VERSION_SPLIT)))), 0)
+    $(error The VERSION_TAG patch version string contain non-numeric characters)
+  endif
+
   VERSION_SPLIT:=$(wordlist 1, 2, $(VERSION_SPLIT)) $(shell echo $$(($(word 3,$(VERSION_SPLIT))+1)))
 endif
 
-IS_NOT_NUMBER:=$(shell echo $(VERSION_SPLIT) | sed -e 's/[0123456789]//g')
-
-ifneq ($(words $(IS_NOT_NUMBER)), 0)
+ifneq ($(words $(call is_not_number,$(VERSION_SPLIT))), 0)
   $(error The version string contain non-numeric characters)
 endif
 
@@ -101,6 +108,7 @@ release-all: release-clean distbuild $(RELEASES) show-releases
 distbuild:
 	@mkdir -p $(RELEASE_ROOT)
 
+# Arguments os,arch,build 
 define build-target
 release-$(1)/$(2)-$(PROJECT): RELEASE_GO_LDFLAGS:=-ldflags="$(GO_LDFLAGS) -X '$(GOMODULECMD).GoOs=$(1)' -X '$(GOMODULECMD).GoArch=$(2)'"
 
