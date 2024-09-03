@@ -21,6 +21,18 @@ import (
 
 var Version string = "v0.0.0"
 
+var SemVerMajor string
+var SemVerMinor string
+var SemVerPatch string
+var SemVerPrerelease string
+var SemVerBuild string
+var BuildDate string
+var BuildVcsUrl string
+var BuildVcsId string
+var BuildVcsIdDate string
+var GoArch string
+var GoOs string
+
 type OCFScheduler struct{}
 
 // Setup to use the cf cli ui prompts
@@ -35,7 +47,11 @@ var ui terminal.UI
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
 		Name:    "OCFScheduler",
-		Version: normalizeVersion(Version),
+		Version: plugin.VersionType{
+			Major: getVersion("Major", SemVerMajor),
+			Minor: getVersion("Minor", SemVerMinor),
+			Build: getVersion("Patch",SemVerPatch),
+		},
 		Commands: []plugin.Command{
 			{
 				Name:     "create-job",
@@ -251,26 +267,61 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 	}
 }
 
-func main() {
-	plugin.Start(new(OCFScheduler))
+func createBuildMeta(buildOs, buildArch, build string) string {
+	p1 := strings.TrimSpace(buildOs)
+	p2 := strings.TrimSpace(buildArch)
+	p3 := strings.TrimSpace(build)
+	if p1 == "" || p2 == "" {
+		panic(fmt.Sprintf("Go meta data is missing one of its parts: %s, %s ", p1, p2))
+	}
+	b := strings.Join([]string{p1, p2}, ".")
+	if p3 != "" {
+		b += "." + p3
+	}
+	return b
 }
 
-func normalizeVersion(version string) plugin.VersionType {
-	if strings.ToLower(version)[0] == []byte("v")[0] {
-		version = version[1:]
+func createSemVer(major, minor, patch, prerelease, build string) string {
+	p1 := strings.TrimSpace(major)
+	p2 := strings.TrimSpace(minor)
+	p3 := strings.TrimSpace(patch)
+	p4 := strings.TrimSpace(prerelease)
+	p5 := strings.TrimSpace(build)
+	if p1 == "" || p2 == "" || p3 == "" {
+		panic(fmt.Sprintf("Semanic version is missing one of its parts: %s.%s.%s", p1, p2, p3))
 	}
 
-	mmb := strings.Split(version, ".")
-	if len(mmb) != 3 {
-		panic("invalid version: " + version)
+	sv := strings.Join([]string{p1, p2, p3}, ".")
+	if p4 != "" {
+		sv += "-" + p4
 	}
-	major, _ := strconv.Atoi(mmb[0])
-	minor, _ := strconv.Atoi(mmb[1])
-	build, _ := strconv.Atoi(mmb[2])
+	if p5 != "" {
+		sv += "+" + p5
+	}
+	return sv
+}
 
-	return plugin.VersionType{
-		Major: major,
-		Minor: minor,
-		Build: build,
+func getVersion(version, toInt string) int {
+	theInt, err := strconv.Atoi(toInt)
+	if err != nil {
+		theInt = 0
+		fmt.Printf("Warning: %v for %v version value.  Defaulting to a zero value\n", err.Error(), version)
 	}
+	return theInt
+}
+
+func main() {
+	args := os.Args[1:]
+	if len(args) == 0 {
+		bm := createBuildMeta(GoOs, GoArch, SemVerBuild)
+		sv := createSemVer(SemVerMajor, SemVerMinor, SemVerPatch, SemVerPrerelease, bm)
+		f := "%13v %v\n"
+		fmt.Printf(f, "Version:", sv)
+		fmt.Printf(f, "Build Date:", BuildDate)
+		fmt.Printf(f, "VCS Url:", BuildVcsUrl)
+		fmt.Printf(f, "VCS Id:", BuildVcsId)
+		fmt.Printf(f, "VCS Id Date:", BuildVcsIdDate)
+	}
+
+	plugin.Start(new(OCFScheduler))
 }
