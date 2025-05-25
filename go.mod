@@ -4,7 +4,7 @@ go 1.24
 
 require (
 	code.cloudfoundry.org/cli v0.0.0-20250512223002-f10828d071cc
-	github.com/cloudfoundry-community/ocf-scheduler v1.0.0
+	github.com/cloudfoundry-community/ocf-scheduler v1.0.3
 	github.com/cloudfoundry/cf-acceptance-tests v1.9.1-0.20220405181007-a6e4d7ae3b33
 	github.com/cloudfoundry/cf-test-helpers v1.0.1-0.20220329060630-a1956dba8c6c
 	github.com/ess/hype v1.1.5
@@ -26,7 +26,6 @@ require (
 	github.com/cloudfoundry/bosh-utils v0.0.390 // indirect
 	github.com/cppforlife/go-patch v0.1.0 // indirect
 	github.com/ess/debuggable v1.0.0 // indirect
-	github.com/ess/dry v1.0.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect

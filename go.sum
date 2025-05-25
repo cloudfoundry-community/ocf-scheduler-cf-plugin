@@ -36,8 +36,8 @@ github.com/charlievieth/fs v0.0.3/go.mod h1:hD4sRzto1Hw8zCua76tNVKZxaeZZr1RiKftj
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
-github.com/cloudfoundry-community/ocf-scheduler v1.0.0 h1:L7EJs+Q0+/0pP7X8DIJ5LV7k+Zsx/R8VwhvGCml02rE=
-github.com/cloudfoundry-community/ocf-scheduler v1.0.0/go.mod h1:J8/VJYqsxyCm6xSiZN7gr0l8tcghE0b0WHYOdtilNGg=
+github.com/cloudfoundry-community/ocf-scheduler v1.0.3 h1:/eIqo0aLVJT3C3AG8fPxFOBs8y56IgKh1fxWTSKTc4I=
+github.com/cloudfoundry-community/ocf-scheduler v1.0.3/go.mod h1:PZS+aEwzYjUOL7f+PGz8HfPPB6G6EDgYfnPpmfo7WfA=
 github.com/cloudfoundry/bosh-cli v6.4.1+incompatible h1:n5/+NIF9QxvGINOrjh6DmO+GTen78MoCj5+LU9L8bR4=
 github.com/cloudfoundry/bosh-cli v6.4.1+incompatible/go.mod h1:rzIB+e1sn7wQL/TJ54bl/FemPKRhXby5BIMS3tLuWFM=
 github.com/cloudfoundry/bosh-utils v0.0.390 h1:SFpmWQ/HIe+zZq70phH1PZHdPEDywfjgW3ReUVFh1Ns=
@@ -59,8 +59,6 @@ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/ess/debuggable v1.0.0 h1:tMxRJ5kercQkPGa8uvtBou9gisaFgK+iURNSTFEjzdA=
 github.com/ess/debuggable v1.0.0/go.mod h1:xffN9MmBxD0x0wMIXAT7R+jUNZt33fV2v1d9i8v6aS8=
-github.com/ess/dry v1.0.0 h1:vL2Cw5DGpI9+Ph/Yc/9bvgIIfYUkVYf448Uk7OfiHUE=
-github.com/ess/dry v1.0.0/go.mod h1:ONBO4CYuC1L0q8c1pnDJtQwF9H3ZZxKmJtVBVkrU8h0=
 github.com/ess/hype v1.1.5 h1:1FPXP//FD2acM9ViuVmLRcLHEeGAVmuk6UiYfM+GuZ8=
 github.com/ess/hype v1.1.5/go.mod h1:InBwoV1C0c/amJlBisBAwf6bdTwuQY2DkJJNXynsjTE=
 github.com/fatih/color v1.18.0 h1:S8gINlzdQ840/4pfAwic/ZE0djQEH3wM94VfqLTZcOM=
