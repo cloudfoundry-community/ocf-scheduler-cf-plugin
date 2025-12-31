@@ -1,7 +1,11 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
+	"strings"
+
+	"github.com/spf13/pflag"
 
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/client"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
@@ -9,12 +13,32 @@ import (
 
 // cf job-history JOB-NAME
 func JobHistory(services *core.Services, args []string) {
+	filterOutput := "scheduled"
+
+	flags := pflag.NewFlagSet("job-history", pflag.ContinueOnError)
+	flags.FuncP("display","d", "display scheduled, manual or complete execution histories", func(value string) error {
+		if strings.HasPrefix("scheduled", value) {
+			filterOutput="scheduled"
+			return nil
+		} else if strings.HasPrefix("manual", value) {
+			filterOutput = "manual"
+			return nil
+		} else if strings.HasPrefix("all", value) {
+			filterOutput = "all"
+			return nil
+		} else {
+			return errors.New("The display parameter value must be a prefix of the words, scheduled, manual or all.")
+		}
+	})
+	flags.Parse(args)
+	args = flags.Args()
+
 	if len(args) != 2 {
 		fmt.Println("cf job-history JOB-NAME")
 		return
 	}
 
-	if err := jobHistory(services, args); err != nil {
+	if err := jobHistory(services, filterOutput, args); err != nil {
 		fmt.Println("Error:", err.Error())
 		return
 	}
@@ -22,7 +46,7 @@ func JobHistory(services *core.Services, args []string) {
 	fmt.Println("OK")
 }
 
-func jobHistory(services *core.Services, args []string) error {
+func jobHistory(services *core.Services, filterOutput string, args []string) error {
 	space, err := core.MySpace(services)
 	if err != nil {
 		return fmt.Errorf("Could not get current space.")
@@ -59,14 +83,25 @@ func jobHistory(services *core.Services, args []string) error {
 	)
 
 	for _, execution := range executions {
-		table.Add(
-			execution.GUID,
-			execution.State,
-			execution.ScheduledTime.String(),
-			execution.ExecutionStartTime.String(),
-			execution.ExecutionEndTime.String(),
-			execution.Message,
-		)
+
+		var scheduledTime string
+
+		if execution.ScheduledTime.IsZero() {
+			scheduledTime = "manual"
+		} else {
+			scheduledTime =execution.ScheduledTime.String()
+		}
+
+		if filterOutput == "all" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
+			table.Add(
+				execution.GUID,
+				execution.State,
+				scheduledTime,
+				execution.ExecutionStartTime.String(),
+				execution.ExecutionEndTime.String(),
+				execution.Message,
+			)
+		}
 	}
 
 	table.Print()
