@@ -145,3 +145,7 @@ func (t *Table) Print() {
 	fmt.Fprintf(t.writer, "%s\n", strings.Join(t.rows, "\n"))
 	t.writer.Flush()
 }
+
+func (t *Table) Count() int {
+	return len(t.rows) 
+}
