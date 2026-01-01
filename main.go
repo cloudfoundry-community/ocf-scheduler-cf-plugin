@@ -46,11 +46,11 @@ var ui terminal.UI
 
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
-		Name:    "OCFScheduler",
+		Name: "OCFScheduler",
 		Version: plugin.VersionType{
 			Major: getVersion("Major", SemVerMajor),
 			Minor: getVersion("Minor", SemVerMinor),
-			Build: getVersion("Patch",SemVerPatch),
+			Build: getVersion("Patch", SemVerPatch),
 		},
 		Commands: []plugin.Command{
 			{
