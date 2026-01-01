@@ -15,7 +15,7 @@ import (
 func JobHistory(services *core.Services, args []string) {
 	filterOutput := "scheduled"
 
-	flags := pflag.NewFlagSet("job-history", pflag.ContinueOnError)
+	flags := pflag.NewFlagSet("job-history", pflag.ExitOnError)
 	flags.FuncP("display","d", "display scheduled, manual or complete execution histories", func(value string) error {
 		if strings.HasPrefix("scheduled", value) {
 			filterOutput="scheduled"
@@ -27,7 +27,7 @@ func JobHistory(services *core.Services, args []string) {
 			filterOutput = "all"
 			return nil
 		} else {
-			return errors.New("The display parameter value must be a prefix of the words, scheduled, manual or all.")
+			return errors.New("The display parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
 		}
 	})
 	flags.Parse(args)
@@ -59,7 +59,7 @@ func jobHistory(services *core.Services, filterOutput string, args []string) err
 		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
 	}
 
-	err = core.PrintActionInProgress(services, "Getting scheduled job history for %s", name)
+	err = core.PrintActionInProgress(services, "Getting job history for %s", name)
 	if err != nil {
 		return err
 	}
