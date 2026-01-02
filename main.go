@@ -57,7 +57,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
-					Usage: "create-job:\n\tcf create-job APP-NAME JOB-NAME COMMAND [OPTIONS]\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk LIMIT/-k LIMIT set job(task) disk limit (default 1024M)\n\t--memory LIMIT/-m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
+					Usage: "create-job:\n\tcf create-job [OPTIONS] APP-NAME JOB-NAME COMMAND\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk, -k LIMIT set job(task) disk limit (default 1024M)\n\t--memory, -m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
 				},
 			},
 			{
@@ -99,14 +99,14 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-job",
 				HelpText: "Deletes named job.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job:\n\tcf delete-job JOB-NAME [OPTIONS]\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-job:\n\tcf delete-job [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-job-schedule",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-call-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-job-schedule:\n\tcf delete-call-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -155,14 +155,14 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-call",
 				HelpText: "Deletes the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call:\n\tcf delete-call CALL-NAME [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-call:\n\tcf delete-call [OPTIONS] CALL-NAME\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-call-schedule",
 				HelpText: "Delete a call scheduled with a given GUID",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call-schedule:\n\tcf delete-call-schedule CALL-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-call-schedule:\n\tcf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 		},

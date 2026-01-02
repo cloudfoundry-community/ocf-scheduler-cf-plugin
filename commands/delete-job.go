@@ -22,7 +22,7 @@ func DeleteJob(services *core.Services, args []string) {
 	args = flags.Args()
 
 	if len(args) != 2 {
-		fmt.Println("cf delete-job JOB-NAME [OPTIONS]")
+		fmt.Println("cf delete-job [OPTIONS] JOB-NAME")
 		return
 	}
 

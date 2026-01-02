@@ -22,7 +22,7 @@ func DeleteCall(services *core.Services, args []string) {
 	args = flags.Args()
 
 	if len(args) != 2 {
-		fmt.Println("cf delete-call CALL-NAME [OPTIONS]")
+		fmt.Println("cf delete-call [OPTIONS] CALL-NAME")
 		return
 	}
 

@@ -22,7 +22,7 @@ func DeleteJobSchedule(services *core.Services, args []string) {
 
 	args = flags.Args()
 	if len(args) != 3 {
-		fmt.Println("cf delete-job-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]")
+		fmt.Println("cf delete-job-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID")
 		return
 	}
 

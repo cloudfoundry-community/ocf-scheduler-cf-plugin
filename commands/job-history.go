@@ -34,7 +34,8 @@ func JobHistory(services *core.Services, args []string) {
 	args = flags.Args()
 
 	if len(args) != 2 {
-		fmt.Println("cf job-history JOB-NAME [OPTIONS]")
+		fmt.Println("cf job-history [OPTIONS] JOB-NAME")
+		pflag.Usage()
 		return
 	}
 
