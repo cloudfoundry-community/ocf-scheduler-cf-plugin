@@ -92,7 +92,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "job-history",
 				HelpText: "Lists execution history for the given job name",
 				UsageDetails: plugin.Usage{
-					Usage: "job-history:\n\tcf job-history JOB-NAME",
+					Usage: "job-history:\n\tcf job-history [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the requested job name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters job history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
 				},
 			},
 			{
@@ -106,7 +106,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "delete-job-schedule",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-job-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-job-schedule:\n\tcf delete-call-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -148,7 +148,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "call-history",
 				HelpText: "Shows the execution history for the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "call-history:\n\tcf call-history CALL-NAME",
+					Usage: "call-history:\n\tcf call-history [OPTIONS] CALL-NAME\n\nWHERE\n\tCALL-NAME is the requested call name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters call history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
 				},
 			},
 			{
