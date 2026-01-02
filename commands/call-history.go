@@ -16,25 +16,25 @@ func CallHistory(services *core.Services, args []string) {
 	filterOutput := "scheduled"
 
 	flags := pflag.NewFlagSet("call-history", pflag.ExitOnError)
-	flags.FuncP("display","d", "display scheduled, manual or complete execution histories", func(value string) error {
+	flags.FuncP("show", "s", "display scheduled, manual or complete call execution history", func(value string) error {
 		if strings.HasPrefix("scheduled", value) {
-			filterOutput="scheduled"
+			filterOutput = "scheduled"
 			return nil
 		} else if strings.HasPrefix("manual", value) {
 			filterOutput = "manual"
 			return nil
 		} else if strings.HasPrefix("all", value) {
-			filterOutput = "all"
+			filterOutput = "complete"
 			return nil
 		} else {
-			return errors.New("The display parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
+			return errors.New("The show parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
 		}
 	})
 	flags.Parse(args)
 	args = flags.Args()
 
 	if len(args) != 2 {
-		fmt.Println("cf call-history CALL-NAME")
+		fmt.Println("cf call-history CALL-NAME [OPTIONS]")
 		return
 	}
 
@@ -65,15 +65,30 @@ func callHistory(services *core.Services, filterOutput string, args []string) er
 	}
 
 	executions, _ := client.ListCallExecutions(services.Client, call)
-	count := len(executions)
-	if count == 0 {
-		fmt.Printf("No executions for call %s.\n", name)
-		return nil
+	totalCount := len(executions)
+	var manualCount, scheduledCount int
+
+	filterCount := func() int {
+		switch filterOutput {
+		case "scheduled":
+			return scheduledCount
+		case "manual":
+			return manualCount
+		}
+		return totalCount
 	}
 
-	fmt.Println("1 -", count, "of", count, "Total Results")
+	filterDisplayName := func() string {
+		switch filterOutput {
+		case "scheduled":
+			return filterOutput
+		case "manual":
+			return "ad hoc"
+		}
+		return ""
+	}
 
-	output := core.NewTable().Add(
+	table := core.NewTable().Add(
 		"Execution GUID",
 		"Execution State",
 		"Scheduled Time",
@@ -83,16 +98,19 @@ func callHistory(services *core.Services, filterOutput string, args []string) er
 	)
 
 	for _, execution := range executions {
+
 		var scheduledTime string
 
 		if execution.ScheduledTime.IsZero() {
 			scheduledTime = "manual"
+			manualCount++
 		} else {
-			scheduledTime =execution.ScheduledTime.String()
+			scheduledTime = execution.ScheduledTime.String()
+			scheduledCount++
 		}
 
-		if filterOutput == "all" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
-			output.Add(
+		if filterOutput == "complete" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
+			table.Add(
 				execution.GUID,
 				execution.State,
 				scheduledTime,
@@ -103,7 +121,22 @@ func callHistory(services *core.Services, filterOutput string, args []string) er
 		}
 	}
 
-	output.Print()
+	if filterCount() == 0 {
+		fmt.Printf("No%s executions for call %s\n", core.AddSpace(filterDisplayName()), name)
+		return nil
+	}
+
+	makeExecutionPlural := func(v int) string {
+		s := "execution"
+		if v != 0 {
+			s += "s"
+		}
+		return s
+	}
+
+	fmt.Printf("1 - %v out of %v call %s\n", filterCount(), totalCount, makeExecutionPlural(totalCount))
+
+	table.Print()
 
 	return nil
 }

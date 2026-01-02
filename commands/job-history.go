@@ -16,25 +16,25 @@ func JobHistory(services *core.Services, args []string) {
 	filterOutput := "scheduled"
 
 	flags := pflag.NewFlagSet("job-history", pflag.ExitOnError)
-	flags.FuncP("display","d", "display scheduled, manual or complete execution histories", func(value string) error {
+	flags.FuncP("show", "s", "display scheduled, manual or complete job execution history", func(value string) error {
 		if strings.HasPrefix("scheduled", value) {
-			filterOutput="scheduled"
+			filterOutput = "scheduled"
 			return nil
 		} else if strings.HasPrefix("manual", value) {
 			filterOutput = "manual"
 			return nil
 		} else if strings.HasPrefix("all", value) {
-			filterOutput = "all"
+			filterOutput = "complete"
 			return nil
 		} else {
-			return errors.New("The display parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
+			return errors.New("The show parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
 		}
 	})
 	flags.Parse(args)
 	args = flags.Args()
 
 	if len(args) != 2 {
-		fmt.Println("cf job-history JOB-NAME")
+		fmt.Println("cf job-history JOB-NAME [OPTIONS]")
 		return
 	}
 
@@ -65,13 +65,28 @@ func jobHistory(services *core.Services, filterOutput string, args []string) err
 	}
 
 	executions, _ := client.ListJobExecutions(services.Client, job)
-	count := len(executions)
-	if count == 0 {
-		fmt.Printf("No executions for job %s.\n", name)
-		return nil
+	totalCount := len(executions)
+	var manualCount, scheduledCount int
+
+	filterCount := func() int {
+		switch filterOutput {
+		case "scheduled":
+			return scheduledCount
+		case "manual":
+			return manualCount
+		}
+		return totalCount
 	}
 
-	fmt.Println("1 -", count, "of", count, "Total Results")
+	filterDisplayName := func() string {
+		switch filterOutput {
+		case "scheduled":
+			return filterOutput
+		case "manual":
+			return "ad hoc"
+		}
+		return ""
+	}
 
 	table := core.NewTable().Add(
 		"Execution GUID",
@@ -88,11 +103,13 @@ func jobHistory(services *core.Services, filterOutput string, args []string) err
 
 		if execution.ScheduledTime.IsZero() {
 			scheduledTime = "manual"
+			manualCount++
 		} else {
-			scheduledTime =execution.ScheduledTime.String()
+			scheduledTime = execution.ScheduledTime.String()
+			scheduledCount++
 		}
 
-		if filterOutput == "all" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
+		if filterOutput == "complete" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
 			table.Add(
 				execution.GUID,
 				execution.State,
@@ -103,6 +120,21 @@ func jobHistory(services *core.Services, filterOutput string, args []string) err
 			)
 		}
 	}
+
+	if filterCount() == 0 {
+		fmt.Printf("No%s executions for job %s\n", core.AddSpace(filterDisplayName()), name)
+		return nil
+	}
+
+	makeExecutionPlural := func(v int) string {
+		s := "execution"
+		if v != 0 {
+			s += "s"
+		}
+		return s
+	}
+
+	fmt.Printf("1 - %v out of %v job %s\n", filterCount(), totalCount, makeExecutionPlural(totalCount))
 
 	table.Print()
 	return nil
