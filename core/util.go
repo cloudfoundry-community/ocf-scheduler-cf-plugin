@@ -119,6 +119,14 @@ func PrintActionInProgress(services *Services, message string, args ...interface
 	return nil
 }
 
+// function used to avoid double spaces where the string value can be empty
+func AddSpace(s string) string {
+	if strings.TrimSpace(s) == "" {
+		return ""
+	}
+	return " " + s
+}
+
 type Table struct {
 	rows   []string
 	writer *tabwriter.Writer
@@ -144,4 +152,8 @@ func (t *Table) Add(values ...string) *Table {
 func (t *Table) Print() {
 	fmt.Fprintf(t.writer, "%s\n", strings.Join(t.rows, "\n"))
 	t.writer.Flush()
+}
+
+func (t *Table) Count() int {
+	return len(t.rows)
 }

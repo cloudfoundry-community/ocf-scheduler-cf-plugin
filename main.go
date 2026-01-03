@@ -46,18 +46,18 @@ var ui terminal.UI
 
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
-		Name:    "OCFScheduler",
+		Name: "OCFScheduler",
 		Version: plugin.VersionType{
 			Major: getVersion("Major", SemVerMajor),
 			Minor: getVersion("Minor", SemVerMinor),
-			Build: getVersion("Patch",SemVerPatch),
+			Build: getVersion("Patch", SemVerPatch),
 		},
 		Commands: []plugin.Command{
 			{
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
-					Usage: "create-job:\n\tcf create-job APP-NAME JOB-NAME COMMAND [OPTIONS]\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk LIMIT/-k LIMIT set job(task) disk limit (default 1024M)\n\t--memory LIMIT/-m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
+					Usage: "create-job:\n\tcf create-job [OPTIONS] APP-NAME JOB-NAME COMMAND\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk, -k LIMIT set job(task) disk limit (default 1024M)\n\t--memory, -m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
 				},
 			},
 			{
@@ -92,21 +92,21 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "job-history",
 				HelpText: "Lists execution history for the given job name",
 				UsageDetails: plugin.Usage{
-					Usage: "job-history:\n\tcf job-history JOB-NAME",
+					Usage: "job-history:\n\tcf job-history [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the requested job name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters job history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
 				},
 			},
 			{
 				Name:     "delete-job",
 				HelpText: "Deletes named job.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job:\n\tcf delete-job JOB-NAME [OPTIONS]\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-job:\n\tcf delete-job [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-job-schedule",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-job-schedule JOB-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-job-schedule:\n\tcf delete-call-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -148,21 +148,21 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "call-history",
 				HelpText: "Shows the execution history for the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "call-history:\n\tcf call-history CALL-NAME",
+					Usage: "call-history:\n\tcf call-history [OPTIONS] CALL-NAME\n\nWHERE\n\tCALL-NAME is the requested call name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters call history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
 				},
 			},
 			{
 				Name:     "delete-call",
 				HelpText: "Deletes the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call:\n\tcf delete-call CALL-NAME [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-call:\n\tcf delete-call [OPTIONS] CALL-NAME\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "delete-call-schedule",
 				HelpText: "Delete a call scheduled with a given GUID",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call-schedule:\n\tcf delete-call-schedule CALL-NAME SCHEDULE-GUID [OPTIONS]\n\nOPTIONS\n\t--force /-f   Force deletion without confirmation",
+					Usage: "delete-call-schedule:\n\tcf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 		},

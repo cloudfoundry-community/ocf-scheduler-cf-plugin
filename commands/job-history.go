@@ -1,7 +1,11 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
+	"strings"
+
+	"github.com/spf13/pflag"
 
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/client"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
@@ -9,12 +13,33 @@ import (
 
 // cf job-history JOB-NAME
 func JobHistory(services *core.Services, args []string) {
+	filterOutput := "scheduled"
+
+	flags := pflag.NewFlagSet("job-history", pflag.ExitOnError)
+	flags.FuncP("show", "s", "display scheduled, manual or complete job execution history", func(value string) error {
+		if strings.HasPrefix("scheduled", value) {
+			filterOutput = "scheduled"
+			return nil
+		} else if strings.HasPrefix("manual", value) {
+			filterOutput = "manual"
+			return nil
+		} else if strings.HasPrefix("all", value) {
+			filterOutput = "complete"
+			return nil
+		} else {
+			return errors.New("The show parameter value must be a prefix of one of theses words, \"scheduled\", \"manual\" or \"all\".")
+		}
+	})
+	flags.Parse(args)
+	args = flags.Args()
+
 	if len(args) != 2 {
-		fmt.Println("cf job-history JOB-NAME")
+		fmt.Println("cf job-history [OPTIONS] JOB-NAME")
+		pflag.Usage()
 		return
 	}
 
-	if err := jobHistory(services, args); err != nil {
+	if err := jobHistory(services, filterOutput, args); err != nil {
 		fmt.Println("Error:", err.Error())
 		return
 	}
@@ -22,7 +47,7 @@ func JobHistory(services *core.Services, args []string) {
 	fmt.Println("OK")
 }
 
-func jobHistory(services *core.Services, args []string) error {
+func jobHistory(services *core.Services, filterOutput string, args []string) error {
 	space, err := core.MySpace(services)
 	if err != nil {
 		return fmt.Errorf("Could not get current space.")
@@ -35,19 +60,34 @@ func jobHistory(services *core.Services, args []string) error {
 		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
 	}
 
-	err = core.PrintActionInProgress(services, "Getting scheduled job history for %s", name)
+	err = core.PrintActionInProgress(services, "Getting job history for %s", name)
 	if err != nil {
 		return err
 	}
 
 	executions, _ := client.ListJobExecutions(services.Client, job)
-	count := len(executions)
-	if count == 0 {
-		fmt.Printf("No executions for job %s.\n", name)
-		return nil
+	totalCount := len(executions)
+	var manualCount, scheduledCount int
+
+	filterCount := func() int {
+		switch filterOutput {
+		case "scheduled":
+			return scheduledCount
+		case "manual":
+			return manualCount
+		}
+		return totalCount
 	}
 
-	fmt.Println("1 -", count, "of", count, "Total Results")
+	filterDisplayName := func() string {
+		switch filterOutput {
+		case "scheduled":
+			return filterOutput
+		case "manual":
+			return "ad hoc"
+		}
+		return ""
+	}
 
 	table := core.NewTable().Add(
 		"Execution GUID",
@@ -59,15 +99,43 @@ func jobHistory(services *core.Services, args []string) error {
 	)
 
 	for _, execution := range executions {
-		table.Add(
-			execution.GUID,
-			execution.State,
-			execution.ScheduledTime.String(),
-			execution.ExecutionStartTime.String(),
-			execution.ExecutionEndTime.String(),
-			execution.Message,
-		)
+
+		var scheduledTime string
+
+		if execution.ScheduledTime.IsZero() {
+			scheduledTime = "manual"
+			manualCount++
+		} else {
+			scheduledTime = execution.ScheduledTime.String()
+			scheduledCount++
+		}
+
+		if filterOutput == "complete" || filterOutput == scheduledTime || (filterOutput == "scheduled" && scheduledTime != "manual") {
+			table.Add(
+				execution.GUID,
+				execution.State,
+				scheduledTime,
+				execution.ExecutionStartTime.String(),
+				execution.ExecutionEndTime.String(),
+				execution.Message,
+			)
+		}
 	}
+
+	if filterCount() == 0 {
+		fmt.Printf("No%s executions for job %s\n", core.AddSpace(filterDisplayName()), name)
+		return nil
+	}
+
+	makeExecutionPlural := func(v int) string {
+		s := "execution"
+		if v != 0 {
+			s += "s"
+		}
+		return s
+	}
+
+	fmt.Printf("1 - %v out of %v job %s\n", filterCount(), totalCount, makeExecutionPlural(totalCount))
 
 	table.Print()
 	return nil

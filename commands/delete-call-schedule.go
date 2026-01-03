@@ -22,7 +22,7 @@ func DeleteCallSchedule(services *core.Services, args []string) {
 	args = flags.Args()
 
 	if len(args) != 3 {
-		fmt.Println("cf delete-call-schedule CALL-NAME SCHEDULE-GUID [OPTIONS]")
+		fmt.Println("cf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID")
 		return
 	}
 
