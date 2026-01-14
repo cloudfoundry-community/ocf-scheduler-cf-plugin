@@ -165,6 +165,13 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 					Usage: "delete-call-schedule:\n\tcf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
+			{
+				Name:     "scheduler-time-zones",
+				HelpText: "Lists scheduler time zones",
+				UsageDetails: plugin.Usage{
+					Usage: "jobs:\ncf scheduler-time-zones",
+				},
+			},
 		},
 	}
 }
@@ -264,6 +271,9 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	case "delete-call-schedule":
 		commands.DeleteCallSchedule(services, args)
+
+	case "scheduler-time-zones":
+		commands.SchedulerTimeZones(services, args)
 	}
 }
 
