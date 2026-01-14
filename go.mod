@@ -2,6 +2,8 @@ module github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
 
 go 1.25
 
+replace github.com/cloudfoundry-community/ocf-scheduler => ../ocf-scheduler
+
 require (
 	code.cloudfoundry.org/cli v0.0.0-20250512223002-f10828d071cc
 	github.com/cloudfoundry-community/ocf-scheduler v1.0.3
@@ -29,8 +31,8 @@ require (
 	github.com/cppforlife/go-patch v0.1.0 // indirect
 	github.com/ess/debuggable v1.0.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/fxamacker/cbor/v2 v2.7.1 // indirect
+	github.com/fsnotify/fsnotify v1.9.0 // indirect
+	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
