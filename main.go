@@ -71,7 +71,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "schedule-job",
 				HelpText: "Schedules the named job (task) to run based on the given cron schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "schedule-job:\n\tcf schedule-job JOB-NAME CRON-EXPRESSION\n\nWHERE\n\tJOB-NAME is the name of the created job\n\tCRON-EXPRESSION is the cron schedule format \"MIN HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"",
+					Usage: "schedule-job:\n\tcf schedule-job [OPTIONS] JOB-NAME CRON-EXPRESSION\n\nWHERE\n\tJOB-NAME is the name of the created job\n\tCRON-EXPRESSION is the cron schedule format \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS\n\t--timezone[=]| -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO\n\tscheduler-time-zones\n\n",
 				},
 			},
 			{
@@ -104,9 +104,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 			},
 			{
 				Name:     "delete-job-schedule",
+				Alias:    "djs",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-call-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
+					Usage: "delete-job-schedule:\n\tcf delete-job-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -127,7 +128,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "schedule-call",
 				HelpText: "Schedules a call to be run based on the supplied cron schedule",
 				UsageDetails: plugin.Usage{
-					Usage: "schedule-call:\n\tcf schedule-call CALL-NAME SCHEDULE\n\tCALL-NAME is a name for the scheduled call\n\tSCHEUDLE is a schedule using cron schedule format \"MIN HOUR DAY-OF-MONTH DAY-OF-WEEK\"\n\nEXAMPLE\n\tcf schedule-call hourlyrun \"0 * * * *\"",
+					Usage: "schedule-call:\n\tcf schedule-call [OPTIONS] CALL-NAME CRON-EXPRESSION\n\nWHERE\n\tCALL-NAME is a name for the scheduled call\n\tCRON-EXPRESSION is a schedule using cron format \"MINUTE HOUR DAY-OF-MONTH DAY-OF-WEEK\"\n\nOPTIONS\n\t--timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO\n\tscheduler-time-zones\n",
 				},
 			},
 			{
@@ -160,6 +161,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 			},
 			{
 				Name:     "delete-call-schedule",
+				Alias:    "dcs",
 				HelpText: "Delete a call scheduled with a given GUID",
 				UsageDetails: plugin.Usage{
 					Usage: "delete-call-schedule:\n\tcf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
@@ -167,9 +169,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 			},
 			{
 				Name:     "scheduler-time-zones",
+				Alias:    "stz",
 				HelpText: "Lists scheduler time zones",
 				UsageDetails: plugin.Usage{
-					Usage: "jobs:\ncf scheduler-time-zones",
+					Usage: "scheduler-time-zones:\n\tcf scheduler-time-zones\n\nSEE ALSO\n   schedule-job, schedule-call\n",
 				},
 			},
 		},
