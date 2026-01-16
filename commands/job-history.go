@@ -60,7 +60,7 @@ func jobHistory(services *core.Services, filterOutput string, args []string) err
 		return fmt.Errorf("Could not find job named %s in space %s.\n", name, space.Name)
 	}
 
-	err = core.PrintActionInProgress(services, "Getting job history for %s", name)
+	err = core.PrintActionInProgress(services, "Getting %s job history for %s", filterOutput, name)
 	if err != nil {
 		return err
 	}

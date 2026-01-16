@@ -59,7 +59,7 @@ func callHistory(services *core.Services, filterOutput string, args []string) er
 		return fmt.Errorf("Could not find call named %s in space %s.\n", name, space.Name)
 	}
 
-	err = core.PrintActionInProgress(services, "Getting call history for %s", name)
+	err = core.PrintActionInProgress(services, "Getting %s call history for %s", filterOutput, name)
 	if err != nil {
 		return err
 	}

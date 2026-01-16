@@ -49,13 +49,9 @@ func ListCallExecutions(driver *core.Driver, call *scheduler.Call) ([]*scheduler
 
 	executions := data.Resources
 
-	// Apparently, we only care about *scheduled* executions, not executions
-	// from ad-hoc call runs.
 	scheduled := make([]*scheduler.Execution, 0)
 	for _, execution := range executions {
-		if !execution.ScheduledTime.IsZero() {
-			scheduled = append(scheduled, execution)
-		}
+		scheduled = append(scheduled, execution)
 	}
 
 	sort.Sort(byExecutionStart(scheduled))
