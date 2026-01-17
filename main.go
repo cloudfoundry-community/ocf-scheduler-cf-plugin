@@ -54,6 +54,13 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 		},
 		Commands: []plugin.Command{
 			{
+				Name:     "cron-expression",
+				HelpText: "Display documentation on how to write ocf-scheduler's cron expression.",
+				UsageDetails: plugin.Usage{
+					Usage: "",
+				},
+			},
+			{
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
@@ -227,6 +234,8 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 	services := &core.Services{CLI: cliConnection, Client: client, UI: ui}
 
 	switch args[0] {
+	case "cron-expression":
+		break;
 	case "create-job":
 		commands.CreateJob(services, args)
 
