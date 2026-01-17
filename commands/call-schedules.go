@@ -68,7 +68,7 @@ func callSchedules(services *core.Services) error {
 
 			if output[appGUID] == nil {
 				output[appGUID] = []string{
-					"Call Name\tURL\tSchedule\tExpression",
+					"Call Name\tURL\tSchedule GUID\tExpression",
 				}
 			}
 

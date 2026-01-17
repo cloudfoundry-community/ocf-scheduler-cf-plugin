@@ -68,7 +68,7 @@ func jobSchedules(services *core.Services) error {
 
 			if output[appGUID] == nil {
 				output[appGUID] = []string{
-					"Job Name\tCommand\tSchedule\tExpression",
+					"Job Name\tCommand\tSchedule GUID\tExpression",
 				}
 			}
 

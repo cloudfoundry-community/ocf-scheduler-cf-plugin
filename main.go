@@ -57,49 +57,49 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
-					Usage: "create-job:\n\tcf create-job [OPTIONS] APP-NAME JOB-NAME COMMAND\n\nWHERE\n\tAPP-NAME is the name of the cf app environment to execute with\n\tJOB-NAME is the name for this job (task)\n\tCOMMAND is the name of the command to execute within the app environment.\n\nOPTIONS\n\t--disk, -k LIMIT set job(task) disk limit (default 1024M)\n\t--memory, -m LIMIT set the job(task) memory limit (default 1024M)\n\n\tNOTE: In both of the above options, LIMIT must be specified as an\n\tinteger with an M or G at the end. This suffix is required to\n\tdifferentiate between megabytes and gigabytes (and to avoid parser\n\terrors).\n",
+					Usage: "cf create-job [OPTIONS] APP-NAME JOB-NAME COMMAND\n\nWHERE\n   APP-NAME is the name of the cf app environment to execute with\n   JOB-NAME is the name for this job (task)\n   COMMAND is the name of the command to execute within the app environment.\n\nOPTIONS:\n   --disk, -k LIMIT set job(task) disk limit (default 1024M)\n   --memory, -m LIMIT set the job(task) memory limit (default 1024M)\n\n   NOTE: In both of the above options, LIMIT must be specified as an\n   integer with an M or G at the end. This suffix is required to\n   differentiate between megabytes and gigabytes (and to avoid parser\n   errors).",
 				},
 			},
 			{
 				Name:     "run-job",
 				HelpText: "Runs the job (task) with the given name once.",
 				UsageDetails: plugin.Usage{
-					Usage: "run-job:\n\tcf run-job JOB-NAME",
+					Usage: "cf run-job JOB-NAME\n\nWHERE\n   JOB-NAME is the name of the created job",
 				},
 			},
 			{
 				Name:     "schedule-job",
 				HelpText: "Schedules the named job (task) to run based on the given cron schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "schedule-job:\n\tcf schedule-job [OPTIONS] JOB-NAME CRON-EXPRESSION\n\nWHERE\n\tJOB-NAME is the name of the created job\n\tCRON-EXPRESSION is the cron schedule format \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS\n\t--timezone[=]| -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO\n\tscheduler-time-zones\n\n",
+					Usage: "cf schedule-job [OPTIONS] JOB-NAME CRON-EXPRESSION\n\nWHERE\n   JOB-NAME is the name of the created job\n   CRON-EXPRESSION is the cron schedule format \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=]| -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   scheduler-time-zones",
 				},
 			},
 			{
 				Name:     "jobs",
 				HelpText: "Lists created jobs.",
 				UsageDetails: plugin.Usage{
-					Usage: "jobs:\ncf jobs",
+					Usage: "cf jobs",
 				},
 			},
 			{
 				Name:     "job-schedules",
 				HelpText: "Lists created job schedules",
 				UsageDetails: plugin.Usage{
-					Usage: "job-schedules:\n\tcf job-schedules",
+					Usage: "cf job-schedules",
 				},
 			},
 			{
 				Name:     "job-history",
 				HelpText: "Lists execution history for the given job name",
 				UsageDetails: plugin.Usage{
-					Usage: "job-history:\n\tcf job-history [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the requested job name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters job history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
+					Usage: "cf job-history [OPTIONS] JOB-NAME\n\nWHERE\n   JOB-NAME is the requested job name for its historical execution data\n\nOPTIONS:\n   --show, -s (scheduled | manual | all)\n\n   The show parameter filters job history based on execution type:\n   scheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n   execution types at the same time. The parameter value is prefix-matched,\n   so you do not need to provide the full value. (default: \"scheduled\")",
 				},
 			},
 			{
 				Name:     "delete-job",
 				HelpText: "Deletes named job.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job:\n\tcf delete-job [OPTIONS] JOB-NAME\n\nWHERE\n\tJOB-NAME is the job (task) name to delete\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
+					Usage: "cf delete-job [OPTIONS] JOB-NAME\n\nWHERE\n   JOB-NAME is the job (task) name to delete\n\nOPTIONS:\n   --force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -107,56 +107,56 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Alias:    "djs",
 				HelpText: "Deletes the job scheduled with the named GUID.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-job-schedule:\n\tcf delete-job-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
+					Usage: "cf delete-job-schedule [OPTIONS] JOB-NAME SCHEDULE-GUID\n\nWHERE\n   JOB-NAME is the job (task) name to delete\n   SCHEDULE-GUID is the GUID from the job-schedules command.\n\nOPTIONS:\n   --force, -f   Force deletion without confirmation",
 				},
 			},
 			{
 				Name:     "create-call",
 				HelpText: "Creates a web request call",
 				UsageDetails: plugin.Usage{
-					Usage: "create-call:\n\tcf create-call APP-NAME CALL-NAME URL\nWHERE\n\tAPP-NAME is the name of the cf app to create a call for\n\tCALL-NAME is a name to refer to the call as\n\tURL is the URL to call.",
+					Usage: "cf create-call APP-NAME CALL-NAME URL\nWHERE\n   APP-NAME is the name of the cf app to create a call for\n   CALL-NAME is a name to refer to the call as\n   URL is the URL to call.",
 				},
 			},
 			{
 				Name:     "run-call",
 				HelpText: "Execute a named call request once.",
 				UsageDetails: plugin.Usage{
-					Usage: "run-call:\n\tcf run-call CALL-NAME",
+					Usage: "cf run-call CALL-NAME\n\nWHERE\n   CALL-NAME is a name for the scheduled call",
 				},
 			},
 			{
 				Name:     "schedule-call",
 				HelpText: "Schedules a call to be run based on the supplied cron schedule",
 				UsageDetails: plugin.Usage{
-					Usage: "schedule-call:\n\tcf schedule-call [OPTIONS] CALL-NAME CRON-EXPRESSION\n\nWHERE\n\tCALL-NAME is a name for the scheduled call\n\tCRON-EXPRESSION is a schedule using cron format \"MINUTE HOUR DAY-OF-MONTH DAY-OF-WEEK\"\n\nOPTIONS\n\t--timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO\n\tscheduler-time-zones\n",
+					Usage: "cf schedule-call [OPTIONS] CALL-NAME CRON-EXPRESSION\n\nWHERE\n   CALL-NAME is a name for the scheduled call\n   CRON-EXPRESSION is a schedule using cron format \"MINUTE HOUR DAY-OF-MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   scheduler-time-zones",
 				},
 			},
 			{
 				Name:     "calls",
 				HelpText: "List created calls",
 				UsageDetails: plugin.Usage{
-					Usage: "calls:\n\tcf calls",
+					Usage: "cf calls",
 				},
 			},
 			{
 				Name:     "call-schedules",
 				HelpText: "List calls scheduled to be run with app and schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "call-schedules:\n\tcf call-schedules",
+					Usage: "cf call-schedules",
 				},
 			},
 			{
 				Name:     "call-history",
 				HelpText: "Shows the execution history for the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "call-history:\n\tcf call-history [OPTIONS] CALL-NAME\n\nWHERE\n\tCALL-NAME is the requested call name for its historical execution data\n\nOPTIONS\n\t--show, -s (scheduled | manual | all)\n\n\tThe show parameter filters call history based on execution type:\n\tscheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n\texecution types at the same time. The parameter value is prefix-matched,\n\tso you do not need to provide the full value. (default: \"scheduled\")\n",
+					Usage: "cf call-history [OPTIONS] CALL-NAME\n\nWHERE\n   CALL-NAME is the requested call name for its historical execution data\n\nOPTIONS:\n   --show, -s (scheduled | manual | all)\n\n   The show parameter filters call history based on execution type:\n   scheduled or ad hoc(\"manual\"). The \"all\" parameter shows both\n   execution types at the same time. The parameter value is prefix-matched,\n   so you do not need to provide the full value. (default: \"scheduled\")",
 				},
 			},
 			{
 				Name:     "delete-call",
 				HelpText: "Deletes the named call.",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call:\n\tcf delete-call [OPTIONS] CALL-NAME\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
+					Usage: "cf delete-call [OPTIONS] CALL-NAME\n\nWHERE\n   CALL-NAME is a name for the scheduled call\nOPTIONS:\n\n   --force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -164,7 +164,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Alias:    "dcs",
 				HelpText: "Delete a call scheduled with a given GUID",
 				UsageDetails: plugin.Usage{
-					Usage: "delete-call-schedule:\n\tcf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nOPTIONS\n\t--force, -f   Force deletion without confirmation",
+					Usage: "cf delete-call-schedule [OPTIONS] CALL-NAME SCHEDULE-GUID\n\nWHERE\n   CALL-NAME is a name for the scheduled call.\n   SCHEDULE-GUID is the GUID from the job-schedules command.\n\nOPTIONS:\n   --force, -f   Force deletion without confirmation",
 				},
 			},
 			{
@@ -172,7 +172,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Alias:    "stz",
 				HelpText: "Lists scheduler time zones",
 				UsageDetails: plugin.Usage{
-					Usage: "scheduler-time-zones:\n\tcf scheduler-time-zones\n\nSEE ALSO\n   schedule-job, schedule-call\n",
+					Usage: "cf scheduler-time-zones\n\nSEE ALSO:\n   schedule-job, schedule-call",
 				},
 			},
 		},
