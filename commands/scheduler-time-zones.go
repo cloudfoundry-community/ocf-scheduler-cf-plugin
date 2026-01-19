@@ -32,10 +32,15 @@ func listTimeZones(services *core.Services) error {
 
 	table := core.NewTable().Add("Time Zone", "Dst", "Aliases")
 
+	var serverTimezone []string = make([]string, 0, 2)
+
 	for _, tz := range *tzs {
 		dstStr := "no"
 		if tz.HasDst {
 			dstStr = "yes"
+		}
+		if tz.IsServerTimeZone != "" {
+			serverTimezone = append(serverTimezone, tz.Name)
 		}
 		aliasStr := ""
 		if len(tz.Aliases) > 0 {
@@ -45,5 +50,11 @@ func listTimeZones(services *core.Services) error {
 	}
 
 	table.Print()
+	
+	switch len(serverTimezone) {
+		case 0: fmt.Println("\nServer timezone was not discovered")
+		case 1: fmt.Println("\nServer timezone is", serverTimezone[0])
+		default:  fmt.Println("\nMultiple server timezones was discovered", serverTimezone)
+	}
 	return nil
 }
