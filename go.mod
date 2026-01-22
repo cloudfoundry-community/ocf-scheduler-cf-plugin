@@ -4,7 +4,7 @@ go 1.25
 
 require (
 	code.cloudfoundry.org/cli v0.0.0-20250512223002-f10828d071cc
-	github.com/cloudfoundry-community/ocf-scheduler v1.0.4-0.20260114214944-99351850e824
+	github.com/cloudfoundry-community/ocf-scheduler v1.0.4-0.20260121222756-7131f6968255
 	github.com/cloudfoundry/cf-acceptance-tests v1.9.1-0.20220405181007-a6e4d7ae3b33
 	github.com/cloudfoundry/cf-test-helpers v1.0.1-0.20220329060630-a1956dba8c6c
 	github.com/ess/hype v1.1.5
@@ -44,7 +44,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
-	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/sirupsen/logrus v1.9.4 // indirect
 	github.com/vito/go-interact v0.0.0-20171111012221-fa338ed9e9ec // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
