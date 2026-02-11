@@ -63,7 +63,6 @@ func CreateJob(services *core.Services, args []string) {
 		return
 	}
 	logRateInBytes, err := quotaInBytes(logRateQuota)
-	fmt.Println("logRateQuota: ", logRateInBytes)
 	if err != nil {
 		fmt.Println("Error: Couldn't parse log rate limit:", err.Error())
 		return
