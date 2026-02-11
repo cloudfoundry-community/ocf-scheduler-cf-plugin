@@ -19,14 +19,35 @@ func quotaInMb(quota string) (int, error) {
 	return int(parsed.ScaledValue(resource.Mega)), nil
 }
 
+func quotaInBytes(quota string) (int, error) {
+	parsed, err := resource.ParseQuantity(quota)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(parsed.Value()), nil
+}
+
+func aliasNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	switch name {
+	case "logs":
+		name = "log-rate-limit"
+		break
+	}
+	return pflag.NormalizedName(name)
+}
+
 // cf create-job APP-NAME JOB-NAME COMMAND
 func CreateJob(services *core.Services, args []string) {
 	var diskQuota string
 	var memoryQuota string
+	var logRateQuota string
 
 	flags := pflag.NewFlagSet("create-job", pflag.ExitOnError)
 	flags.StringVarP(&diskQuota, "disk", "k", "1024M", "disk limit")
 	flags.StringVarP(&memoryQuota, "memory", "m", "1024M", "memory limit")
+	flags.StringVarP(&logRateQuota, "log-rate-limit", "l", "1024M", "log rate limit")
+        flags.SetNormalizeFunc(aliasNormalizeFunc)
 	flags.Parse(args)
 	args = flags.Args()
 
@@ -41,13 +62,19 @@ func CreateJob(services *core.Services, args []string) {
 		fmt.Println("Error: Couldn't parse memory limit:", err.Error())
 		return
 	}
+	logRateInBytes, err := quotaInBytes(logRateQuota)
+	fmt.Println("logRateQuota: ", logRateInBytes)
+	if err != nil {
+		fmt.Println("Error: Couldn't parse log rate limit:", err.Error())
+		return
+	}
 
 	if len(args) != 4 {
 		fmt.Println("cf create-job [OPTIONS] APP-NAME JOB-NAME COMMAND")
 		return
 	}
 
-	if err := createJob(services, args[1], args[2], args[3], diskInMb, memoryInMb); err != nil {
+	if err := createJob(services, args[1], args[2], args[3], diskInMb, memoryInMb, logRateInBytes); err != nil {
 		fmt.Println("Error: " + err.Error())
 		return
 	}
@@ -55,7 +82,7 @@ func CreateJob(services *core.Services, args []string) {
 	fmt.Println("OK")
 }
 
-func createJob(services *core.Services, appName, jobName, command string, diskInMb, memoryInMb int) error {
+func createJob(services *core.Services, appName, jobName, command string, diskInMb, memoryInMb, logRateInBytes int) error {
 	err := core.PrintActionInProgress(services, "Creating job %s for %s with command '%s'", jobName, appName, command)
 	if err != nil {
 		return err
@@ -66,7 +93,7 @@ func createJob(services *core.Services, appName, jobName, command string, diskIn
 		return fmt.Errorf("could not find app with name %s", appName)
 	}
 
-	payload, err := client.CreateJob(services.Client, app.Guid, jobName, command, diskInMb, memoryInMb)
+	payload, err := client.CreateJob(services.Client, app.Guid, jobName, command, diskInMb, memoryInMb, logRateInBytes)
 	if err != nil {
 		return err
 	}
