@@ -19,7 +19,7 @@ func quotaInMb(quota string) (int, error) {
 	return int(parsed.ScaledValue(resource.Mega)), nil
 }
 
-func quotaInBytes(quota string) (int, error) {
+func quotaInBps(quota string) (int, error) {
 	parsed, err := resource.ParseQuantity(quota)
 	if err != nil {
 		return 0, err
@@ -62,7 +62,7 @@ func CreateJob(services *core.Services, args []string) {
 		fmt.Println("Error: Couldn't parse memory limit:", err.Error())
 		return
 	}
-	logRateInBytes, err := quotaInBytes(logRateQuota)
+	logRateInBps, err := quotaInBps(logRateQuota)
 	if err != nil {
 		fmt.Println("Error: Couldn't parse log rate limit:", err.Error())
 		return
@@ -73,7 +73,7 @@ func CreateJob(services *core.Services, args []string) {
 		return
 	}
 
-	if err := createJob(services, args[1], args[2], args[3], diskInMb, memoryInMb, logRateInBytes); err != nil {
+	if err := createJob(services, args[1], args[2], args[3], diskInMb, memoryInMb, logRateInBps); err != nil {
 		fmt.Println("Error: " + err.Error())
 		return
 	}
@@ -81,7 +81,7 @@ func CreateJob(services *core.Services, args []string) {
 	fmt.Println("OK")
 }
 
-func createJob(services *core.Services, appName, jobName, command string, diskInMb, memoryInMb, logRateInBytes int) error {
+func createJob(services *core.Services, appName, jobName, command string, diskInMb, memoryInMb, logRateInBps int) error {
 	err := core.PrintActionInProgress(services, "Creating job %s for %s with command '%s'", jobName, appName, command)
 	if err != nil {
 		return err
@@ -92,7 +92,7 @@ func createJob(services *core.Services, appName, jobName, command string, diskIn
 		return fmt.Errorf("could not find app with name %s", appName)
 	}
 
-	payload, err := client.CreateJob(services.Client, app.Guid, jobName, command, diskInMb, memoryInMb, logRateInBytes)
+	payload, err := client.CreateJob(services.Client, app.Guid, jobName, command, diskInMb, memoryInMb, logRateInBps)
 	if err != nil {
 		return err
 	}
