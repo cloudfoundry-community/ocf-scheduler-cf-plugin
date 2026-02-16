@@ -47,7 +47,7 @@ func CreateJob(services *core.Services, args []string) {
 	flags.StringVarP(&diskQuota, "disk", "k", "1024M", "disk limit")
 	flags.StringVarP(&memoryQuota, "memory", "m", "1024M", "memory limit")
 	flags.StringVarP(&logRateQuota, "log-rate-limit", "l", "1024M", "log rate limit")
-        flags.SetNormalizeFunc(aliasNormalizeFunc)
+	flags.SetNormalizeFunc(aliasNormalizeFunc)
 	flags.Parse(args)
 	args = flags.Args()
 

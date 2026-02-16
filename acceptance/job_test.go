@@ -91,7 +91,7 @@ var _ = Describe("Scheduler Jobs", func() {
 
 			var schedule string
 			re := regexp.MustCompile(`^(.*?)[\s]+(.*?)[\s]+([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12})`)
-			for _, line := range strings.Split(string(schedules.Out.Contents()), "\n") {
+			for line := range strings.SplitSeq(string(schedules.Out.Contents()), "\n") {
 				for _, i := range re.FindAllStringSubmatch(line, -1) {
 					if i[1] == jobName {
 						schedule = i[3]

@@ -50,11 +50,14 @@ func listTimeZones(services *core.Services) error {
 	}
 
 	table.Print()
-	
+
 	switch len(serverTimezone) {
-		case 0: fmt.Println("\nServer timezone was not discovered")
-		case 1: fmt.Println("\nServer timezone is", serverTimezone[0])
-		default:  fmt.Println("\nMultiple server timezones was discovered", serverTimezone)
+	case 0:
+		fmt.Println("\nServer timezone was not discovered")
+	case 1:
+		fmt.Println("\nServer timezone is", serverTimezone[0])
+	default:
+		fmt.Println("\nMultiple server timezones was discovered", serverTimezone)
 	}
 	return nil
 }

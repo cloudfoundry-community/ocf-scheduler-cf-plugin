@@ -188,10 +188,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 
 func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
-	i18n.T = func(translationID string, args ...interface{}) string {
+	i18n.T = func(translationID string, args ...any) string {
 		var buffer bytes.Buffer
 
-		var keys interface{}
+		var keys any
 		if len(args) > 0 {
 			keys = args[0]
 		}
@@ -235,7 +235,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	switch args[0] {
 	case "cron-expression":
-		break;
+		break
 	case "create-job":
 		commands.CreateJob(services, args)
 

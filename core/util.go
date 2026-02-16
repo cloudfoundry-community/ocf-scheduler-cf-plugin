@@ -108,7 +108,7 @@ func GetCurrentContext(services *Services) (*CommandLineContext, error) {
 	}, nil
 }
 
-func PrintActionInProgress(services *Services, message string, args ...interface{}) error {
+func PrintActionInProgress(services *Services, message string, args ...any) error {
 	cliContext, err := GetCurrentContext(services)
 	if err != nil {
 		return err
