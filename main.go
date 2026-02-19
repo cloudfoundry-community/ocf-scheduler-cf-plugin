@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	_ "embed"
 	"fmt"
 	"io"
 	"os"
@@ -36,9 +35,6 @@ var GoOs string
 
 //go:generate go run ./cmd/render-cron-help
 
-//go:embed cron-expression-reference.rendered
-var cronExpressionReference string
-
 type OCFScheduler struct{}
 
 // Setup to use the cf cli ui prompts
@@ -49,6 +45,23 @@ type OCFScheduler struct{}
 
 var teePrinter *terminal.TeePrinter
 var ui terminal.UI
+var cronExpressionUsage string
+
+func init() {
+	// Warn (don't panic) if expected styles are missing — this only affects cron-expression.
+	for _, expected := range []string{"dark", "light", "notty"} {
+		if _, ok := cronExpressionStyles[expected]; !ok {
+			fmt.Fprintf(os.Stderr, "Warning: glamour style %q missing from generated cronExpressionStyles\n", expected)
+		}
+	}
+
+	styleList := strings.Join(commands.AvailableStyles(cronExpressionStyles), ", ")
+	cronExpressionUsage = "cf cron-expression [OPTIONS]\n\nOPTIONS:\n" +
+		"   --no-pager, -n      Do not pipe output through a pager\n" +
+		"   --style, -s STYLE   use Glamour rendering styles: " + styleList +
+		"\n                       (default: dark for TTY, notty otherwise)" +
+		"\n\nThis command uses the PAGER environment variable.  Otherwise it defaults to \n'less' for Linux and 'more' for Windows"
+}
 
 func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
@@ -63,7 +76,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "cron-expression",
 				HelpText: "Display documentation on how to write ocf-scheduler's cron expression.",
 				UsageDetails: plugin.Usage{
-					Usage: "cf cron-expression [OPTIONS]\n\nOPTIONS:\n   --no-pager, -n   Do not pipe output through a pager",
+					Usage: cronExpressionUsage,
 				},
 			},
 			{
@@ -221,7 +234,7 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	// Handle commands that do not require API access
 	if args[0] == "cron-expression" {
-		commands.CronExpression(cronExpressionReference, args)
+		commands.CronExpression(cronExpressionStyles, args)
 		return
 	}
 

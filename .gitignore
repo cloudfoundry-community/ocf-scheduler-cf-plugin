@@ -5,5 +5,5 @@
 /ocf-scheduler-cf-plugin
 .DS_Store
 /releases/**
-cron-expression-reference.rendered
-render-cron-help
+cron_expression_styles.go
+/render-cron-help
