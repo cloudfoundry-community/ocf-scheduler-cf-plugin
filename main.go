@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
 	"io"
 	"os"
@@ -33,6 +34,11 @@ var BuildVcsIdDate string
 var GoArch string
 var GoOs string
 
+//go:generate go run ./cmd/render-cron-help
+
+//go:embed cron-expression-reference.rendered
+var cronExpressionReference string
+
 type OCFScheduler struct{}
 
 // Setup to use the cf cli ui prompts
@@ -57,7 +63,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "cron-expression",
 				HelpText: "Display documentation on how to write ocf-scheduler's cron expression.",
 				UsageDetails: plugin.Usage{
-					Usage: "",
+					Usage: "cf cron-expression [OPTIONS]\n\nOPTIONS:\n   --no-pager, -n   Do not pipe output through a pager",
 				},
 			},
 			{
@@ -213,6 +219,12 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 	// Should we really be using NewPluginUI instead TODO
 	ui = terminal.NewUI(os.Stdin, os.Stdout, teePrinter, trace.NewWriterPrinter(io.Discard, false))
 
+	// Handle commands that do not require API access
+	if args[0] == "cron-expression" {
+		commands.CronExpression(cronExpressionReference, args)
+		return
+	}
+
 	scheduler, err := core.GetScheduler(cliConnection)
 	if err != nil {
 		fmt.Println(err)
@@ -234,8 +246,6 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 	services := &core.Services{CLI: cliConnection, Client: client, UI: ui}
 
 	switch args[0] {
-	case "cron-expression":
-		break
 	case "create-job":
 		commands.CreateJob(services, args)
 

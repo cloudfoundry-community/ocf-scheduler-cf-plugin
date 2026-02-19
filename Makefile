@@ -11,14 +11,27 @@ define is_not_number
 $(shell echo ${1} | sed -e 's/[0123456789]//g')
 endef
 
-ifneq ($(VERSION),)
-VERSION_SPLIT:=$(subst ., ,$(VERSION))
+CLEAN_VERSION = $(patsubst v%,%,$(VERSION))
+HAS_BUILDMETA := $(findstring +,$(CLEAN_VERSION))
+VERSION_BUILDMETA := $(if $(HAS_BUILDMETA),$(lastword $(subst +, ,$(CLEAN_VERSION))),)
+
+VERSION_AND_PRERELEASE := $(firstword $(subst +, ,$(CLEAN_VERSION)))
+
+HAS_PRERELEASE := $(findstring -,$(VERSION_AND_PRERELEASE))
+VERSION_ONLY := $(firstword $(subst -, ,$(VERSION_AND_PRERELEASE)))
+VERSION_PRERELEASE := $(if $(HAS_PRERELEASE),$(patsubst $(VERSION_ONLY)-%,%,$(VERSION_AND_PRERELEASE)),)
+
+# Output results
+
+ifneq ($(VERSION_ONLY),)
+VERSION_SPLIT:=$(subst ., ,$(VERSION_ONLY))
   ifneq ($(words $(VERSION_SPLIT)),3)
-    $(error VERSION does not have 3 parts |$(words $(VERSION_SPLIT))|$(VERSION)|$(VERSION_SPLIT)|)
+    $(error VERSION does not have 3 parts |$(words $(VERSION_SPLIT))|$(VERSION_ONLY)|$(VERSION_SPLIT)|)
   endif
 else
-VERSION_TAG:=$(shell (git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0) | sed -e "s/^v//")
-VERSION_SPLIT:=$(subst ., ,$(VERSION_TAG))
+VERSION_TAG:=$(shell git describe --tags --abbrev=0 2>/dev/null || echo 0.0.0)
+CLEAN_VERSION_TAG = $(patsubst v%,%,$(VERSION_TAG))
+VERSION_SPLIT:=$(subst ., ,$(CLEAN_VERSION_TAG))
   ifneq ($(words $(VERSION_SPLIT)),3)
     $(error VERSION_TAG does not have 3 parts |$(words $(VERSION_SPLIT))|$(VERSION_TAG)|$(VERSION_SPLIT)|)
   endif
@@ -37,8 +50,8 @@ endif
 SEMVER_MAJOR    ?=$(word 1,$(VERSION_SPLIT))
 SEMVER_MINOR    ?=$(word 2,$(VERSION_SPLIT))
 SEMVER_PATCH    ?=$(word 3,$(VERSION_SPLIT))
-SEMVER_PRERELEASE ?=
-SEMVER_BUILDMETA  ?=
+SEMVER_PRERELEASE ?=$(VERSION_PRERELEASE)
+SEMVER_BUILDMETA  ?=$(VERSION_BUILDMETA)
 BUILD_DATE        :=$(shell date -u -Iseconds)
 BUILD_VCS_URL     :=$(shell git config --get remote.origin.url)
 BUILD_VCS_ID      :=$(shell git log -n 1 --date=iso-strict-local --format="%h")
@@ -65,19 +78,22 @@ SEMVER_VERSION := $(SEMVER_VERSION)$(if $(SEMVER_PRERELEASE),-$(SEMVER_PRERELEAS
 
 # GMake rules generally used for local development
 
-.PHONY: build clean install acceptance-tests
+.PHONY: generate build clean install acceptance-tests
+
+generate:
+	go generate ./...
 
 build: BUILD_GO_LDFLAGS:=-ldflags="$(GO_LDFLAGS) -X '$(GOMODULECMD).GoOs=$(GOOS)' -X '$(GOMODULECMD).GoArch=$(GOARCH)'"
 
 build: BUILD_RULE_CMD := CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) \
 	                     go build $(BUILD_GO_LDFLAGS) -o $(DEV_TEST_BUILD)
 
-build: clean
+build: clean generate
 	@echo "Building $(DEV_TEST_BUILD)"
 	$(BUILD_RULE_CMD)
 
 clean:
-	@rm -f $(DEV_TEST_BUILD) || true
+	@rm -f $(DEV_TEST_BUILD) cron-expression-reference.rendered || true
 
 install: build
 	cf install-plugin $(DEV_TEST_BUILD) -f || true
@@ -103,7 +119,7 @@ show-releases:
 
 ci-release: require-VERSION release-all
 
-release-all: release-clean distbuild $(RELEASES) show-releases
+release-all: release-clean generate distbuild $(RELEASES) show-releases
 
 distbuild:
 	@mkdir -p $(RELEASE_ROOT)
