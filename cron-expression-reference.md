@@ -97,11 +97,43 @@ The `@every` descriptor accepts any Go duration string: `s` (seconds), `m` (minu
 
 ## Timezone Support
 
-Any expression can be prefixed with a timezone to control which timezone the schedule is evaluated in. Without a prefix, the server's local timezone is used.
+By default, schedules are evaluated in the scheduler server's local timezone. There are two ways to specify a different timezone.
+
+### Using the `--timezone` flag
+
+The `schedule-job` and `schedule-call` commands accept a `--timezone` (`-t`) flag:
 
 ```
-TZ=America/New_York 0 9 * * *
-CRON_TZ=Europe/Berlin 30 14 * * MON-FRI
+cf schedule-job my-job --timezone America/New_York "0 9 * * *"
+cf schedule-call my-call -t Europe/Berlin "30 14 * * MON-FRI"
 ```
 
-Both `TZ=` and `CRON_TZ=` prefixes are supported. The value must be a valid [IANA timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+This is the recommended approach as it keeps the cron expression and timezone clearly separated.
+
+### Prefixing the cron expression with an environment variable
+
+Alternatively, the cron expression can be prefixed with a `TZ=` or `CRON_TZ=` environment variable, the same way a shell command can be prefixed with a variable assignment:
+
+```
+CRON_TZ=America/New_York 0 9 * * *
+TZ=Europe/Berlin 30 14 * * MON-FRI
+```
+
+Both `CRON_TZ=` and `TZ=` are supported and behave identically.
+
+> **Do not combine both methods.** If you use the `--timezone` flag, do not also include a `TZ=` or `CRON_TZ=` prefix in the expression. The flag works by prepending `CRON_TZ=` to the expression, so using both would produce a malformed expression with two timezone prefixes.
+
+### Listing available timezones
+
+Run `cf scheduler-time-zones` (alias: `stz`) to retrieve the list of supported timezones from the scheduler. The output includes each timezone's name, whether it observes daylight saving time (DST), any aliases, and which timezone the server itself is using.
+
+The timezone value must be a valid [IANA timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Daylight saving time
+
+The scheduler handles DST transitions automatically:
+
+- **Spring forward** (clocks skip an hour) — jobs scheduled during the skipped hour run immediately after the transition.
+- **Fall back** (clocks repeat an hour) — jobs scheduled during the repeated hour run once, during the first occurrence.
+
+To avoid surprises around DST transitions, schedule time-sensitive jobs outside the typical 1:00–3:00 AM transition window, or use a timezone that does not observe DST (e.g. `UTC`, `America/Phoenix`).
