@@ -38,19 +38,22 @@ GO_LDFLAGS = -X '$(GOMODULECMD).SemVerMajor=$($(_HIDE)SEMVER_MAJOR)' \
 
 # GMake rules generally used for local development
 
-.PHONY: build clean install acceptance-tests
+.PHONY: generate build clean install acceptance-tests
+
+generate:
+	go generate ./...
 
 build: BUILD_GO_LDFLAGS:=-ldflags="$(GO_LDFLAGS) -X '$(GOMODULECMD).GoOs=$(GOOS)' -X '$(GOMODULECMD).GoArch=$(GOARCH)'"
 
 build: BUILD_RULE_CMD := CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) \
 	                     go build $(BUILD_GO_LDFLAGS) -o $(DEV_TEST_BUILD)
 
-build: clean
+build: clean generate
 	@echo "Building $(DEV_TEST_BUILD)"
 	$(BUILD_RULE_CMD)
 
 clean:
-	@rm -f $(DEV_TEST_BUILD) || true
+	@rm -f $(DEV_TEST_BUILD) render-cron-help cron_expression_styles.go || true
 
 install: build
 	cf install-plugin $(DEV_TEST_BUILD) -f || true
@@ -92,7 +95,7 @@ ci-release:
 	fi
 	@$(MAKE) check-version release-all
 
-release-all: release-clean distbuild $(RELEASES) show-releases
+release-all: release-clean generate distbuild $(RELEASES) show-releases
 
 distbuild:
 	@mkdir -p $(RELEASE_ROOT)
