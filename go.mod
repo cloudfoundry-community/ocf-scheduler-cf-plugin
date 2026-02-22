@@ -2,6 +2,8 @@ module github.com/cloudfoundry-community/ocf-scheduler-cf-plugin
 
 go 1.25
 
+replace github.com/cloudfoundry-community/ocf-scheduler => ../ocf-scheduler 
+
 require (
 	code.cloudfoundry.org/cli v0.0.0-20250512223002-f10828d071cc
 	github.com/charmbracelet/glamour v0.10.0
