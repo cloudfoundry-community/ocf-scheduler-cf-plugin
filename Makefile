@@ -93,7 +93,7 @@ build: clean generate
 	$(BUILD_RULE_CMD)
 
 clean:
-	@rm -f $(DEV_TEST_BUILD) cron_expression_styles.go || true
+	@rm -f $(DEV_TEST_BUILD) render-cron-help cron_expression_styles.go || true
 
 install: build
 	cf install-plugin $(DEV_TEST_BUILD) -f || true

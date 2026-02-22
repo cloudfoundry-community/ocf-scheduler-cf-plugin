@@ -1,13 +1,13 @@
 # Cron Expression Reference
 
-The OCF Scheduler uses the `cron_expression` expression type for all schedules. Expressions are parsed by the [go-cron](https://github.com/netresearch/go-cron) library using its standard parser, which supports standard cron syntax, extended day-of-month/day-of-week syntax, descriptor shortcuts, and timezone prefixes.
+The OCF Scheduler uses `cron expression` notation for all schedules. Expressions are parsed by the [go-cron](https://github.com/netresearch/go-cron) library using its standard parser, which supports standard cron syntax, extended day-of-month/day-of-week syntax, descriptor shortcuts, and timezone prefixes.
 
 ## Standard Cron Fields
 
-The core format is 5 required fields:
+The core format are 5 required fields:
 
 ```
-minute hour day-of-month month day-of-week
+minute hour day-of-month(DOM) month day-of-week(DOW)
 ```
 
 | Field | Required | Range | Named Values |
