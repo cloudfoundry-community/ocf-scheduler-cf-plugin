@@ -66,7 +66,23 @@ func MySpace(services *Services) (models.SpaceFields, error) {
 }
 
 func MyApps(services *Services) ([]models.GetAppsModel, error) {
-	return services.CLI.GetApps()
+	// The plugin RPC GetApps is backed by the removed CC v2 API; list via v3.
+	space, err := MySpace(services)
+	if err != nil {
+		return nil, err
+	}
+
+	return AppsV3(services.CLI, space.Guid)
+}
+
+func MyAppByName(services *Services, name string) (models.GetAppsModel, error) {
+	// The plugin RPC GetApp is backed by the removed CC v2 API; resolve via v3.
+	space, err := MySpace(services)
+	if err != nil {
+		return models.GetAppsModel{}, err
+	}
+
+	return AppV3ByName(services.CLI, space.Guid, name)
 }
 
 func AppByGUID(apps []models.GetAppsModel, guid string) (models.GetAppsModel, error) {

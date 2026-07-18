@@ -28,7 +28,7 @@ func createCall(services *core.Services, appName, callName, url string) error {
 		return err
 	}
 
-	app, err := services.CLI.GetApp(appName)
+	app, err := core.MyAppByName(services, appName)
 	if err != nil {
 		return fmt.Errorf("could not find app with name %s", appName)
 	}
