@@ -30,9 +30,17 @@ go version;
 
 header "Building $APP_NAME v$VERSION..."
 
-make clean release VERSION=$VERSION APP_NAME=$APP_NAME
-cd builds
-tar -zcvf $BUILD_ROOT/${APP_NAME}-${VERSION}.tar.gz $APP_NAME-*
+# ci-release rather than release: the Makefile has no 'release' target, and
+# ci-release additionally refuses to run unless VERSION was given explicitly
+# on the command line, which is exactly the case here.
+#
+# RELEASE_ROOT is passed rather than assumed so the directory the Makefile
+# writes to and the one we tar from cannot drift apart.
+RELEASE_ROOT="${RELEASE_ROOT:-releases}"
+
+make clean ci-release VERSION="$VERSION" RELEASE_ROOT="$RELEASE_ROOT"
+cd "$RELEASE_ROOT"
+tar -zcvf "$BUILD_ROOT/${APP_NAME}-${VERSION}.tar.gz" "$APP_NAME"-*
 
 echo
 echo "================================================================================"
