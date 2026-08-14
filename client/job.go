@@ -97,12 +97,11 @@ func CreateJob(driver *core.Driver, appGUID, name, command string, diskInMb, mem
 	params.Set("app_guid", appGUID)
 
 	input := &scheduler.Job{
-		Name:       name,
-		Command:    command,
-		DiskInMb:   diskInMb,
-		MemoryInMb: memoryInMb,
-		// add logRateInBps once scheduler is upgraded to use CAPI V3 API
-
+		Name:         name,
+		Command:      command,
+		DiskInMb:     diskInMb,
+		MemoryInMb:   memoryInMb,
+		LogRateInBps: logRateInBps,
 	}
 
 	data, err := json.Marshal(input)
