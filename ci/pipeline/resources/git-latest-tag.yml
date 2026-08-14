@@ -7,6 +7,15 @@ resources:
     uri:         (( grab meta.github.uri ))
     branch:      (( grab meta.github.branch ))
     private_key: (( grab meta.github.private_key ))
-    tag_regex:   '^v[0-9\.]*$'
+    # Accepts both schemes. Releases from v-2.0.0 on carry the 'v-' prefix,
+    # but the legacy 'v' tags up to v1.2.0 have to stay matchable or this
+    # resource would have no version at all and ship-release, which gets it,
+    # could never cut the first v- tag.
+    #
+    # Note both are visible to anything picking a "latest" tag. Git's
+    # --sort=v:refname is versioncmp, not semver: it leaves the prefix in the
+    # key, so every 'v*' outranks every 'v-*'. Scope the candidate list by
+    # family rather than relying on the sort.
+    tag_regex:   '^v-?[0-9\.]*$'
     disable_ci_skip: true
 
