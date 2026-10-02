@@ -45,10 +45,10 @@ type OCFScheduler struct{}
 
 var teePrinter *terminal.TeePrinter
 var ui terminal.UI
-var cronExpressionUsage string
+var helpScheduleUsage string
 
 func init() {
-	// Warn (don't panic) if expected styles are missing — this only affects cron-expression.
+	// Warn (don't panic) if expected styles are missing — this only affects help-schedule.
 	for _, expected := range []string{"dark", "light", "notty"} {
 		if _, ok := cronExpressionStyles[expected]; !ok {
 			fmt.Fprintf(os.Stderr, "Warning: glamour style %q missing from generated cronExpressionStyles\n", expected)
@@ -56,7 +56,7 @@ func init() {
 	}
 
 	styleList := strings.Join(commands.AvailableStyles(cronExpressionStyles), ", ")
-	cronExpressionUsage = "cf cron-expression [OPTIONS]\n\nOPTIONS:\n" +
+	helpScheduleUsage = "cf help-schedule [OPTIONS]\n\nOPTIONS:\n" +
 		"   --no-pager, -n      Do not pipe output through a pager\n" +
 		"   --style, -s STYLE   use Glamour rendering styles: " + styleList +
 		"\n                       (default: dark for TTY, notty otherwise)" +
@@ -73,10 +73,10 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 		},
 		Commands: []plugin.Command{
 			{
-				Name:     "cron-expression",
+				Name:     "help-schedule",
 				HelpText: "Display documentation on how to write ocf-scheduler's cron expression.",
 				UsageDetails: plugin.Usage{
-					Usage: cronExpressionUsage,
+					Usage: helpScheduleUsage,
 				},
 			},
 			{
@@ -233,8 +233,8 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 	ui = terminal.NewUI(os.Stdin, os.Stdout, teePrinter, trace.NewWriterPrinter(io.Discard, false))
 
 	// Handle commands that do not require API access
-	if args[0] == "cron-expression" {
-		commands.CronExpression(cronExpressionStyles, args)
+	if args[0] == "help-schedule" {
+		commands.HelpSchedule(cronExpressionStyles, args)
 		return
 	}
 

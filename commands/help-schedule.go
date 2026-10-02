@@ -13,15 +13,15 @@ import (
 	"golang.org/x/term"
 )
 
-// cf cron-expression
-func CronExpression(styles map[string]string, args []string) {
-	flags := pflag.NewFlagSet("cron-expression", pflag.ContinueOnError)
+// cf help-schedule
+func HelpSchedule(styles map[string]string, args []string) {
+	flags := pflag.NewFlagSet("help-schedule", pflag.ContinueOnError)
 	flags.SetOutput(os.Stderr)
 	noPager := flags.BoolP("no-pager", "n", false, "Do not pipe output through a pager")
 	style := flags.StringP("style", "s", "", "Glamour style for rendering")
 	if err := flags.Parse(args); err != nil {
 		if errors.Is(err, pflag.ErrHelp) {
-			fmt.Fprintln(os.Stderr, "\nFor full usage details run: cf help cron-expression")
+			fmt.Fprintln(os.Stderr, "\nFor full usage details run: cf help help-schedule")
 		}
 		os.Exit(1)
 	}
