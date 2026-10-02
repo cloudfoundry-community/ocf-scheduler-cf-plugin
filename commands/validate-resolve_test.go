@@ -42,9 +42,9 @@ func TestResolveArgs(t *testing.T) {
 		{[]string{"both"}, "", "", "matches 2 jobs or calls"},
 		{[]string{"dup"}, "", "", "matches 2 jobs; use the GUID"},
 		{[]string{"call", "backup"}, "", "", `no call named "backup"`},
-		{[]string{"0", "2", "*", "*", "*"}, "", "", "expected [job|call]"},
+		{[]string{"0", "2", "*", "*", "*"}, "", "", "quote a cron expression"},
 		{[]string{"0", "2 * * *"}, "", "", "quote a cron expression"},
-		{nil, "", "", "expected [job|call]"},
+		{nil, "", "", "cf validate-schedule [OPTIONS] CRON-EXPRESSION"},
 		{[]string{" "}, "", "", "empty argument"},
 		{[]string{"backup", " "}, "", "", "empty argument"},
 	}
@@ -67,5 +67,32 @@ func TestResolveArgs(t *testing.T) {
 	var amb *AmbiguousError
 	if _, err := resolveArgs([]string{"dup"}, jobs, calls); !errors.As(err, &amb) || len(amb.Matches) != 2 || amb.Matches[1].AppGUID != "a2" {
 		t.Errorf("ambiguous: %v", err)
+	}
+}
+
+func TestCheckArgs(t *testing.T) {
+	for _, tt := range []struct {
+		args []string
+		want []string // all must appear; none → no error
+	}{
+		{nil, []string{"cf validate-schedule [OPTIONS] CRON-EXPRESSION", "[job|call] NAME-OR-GUID", "--timezone", "--next", "--prev"}},
+		{[]string{"job"}, nil},
+		{[]string{"job", "backup", "0 2 * * *"}, nil},
+		{[]string{"backup", "0 2 * * *"}, nil},
+		{[]string{"0", "2", "*", "*", "*"}, []string{"quote a cron expression", "cf validate-schedule [OPTIONS] CRON-EXPRESSION"}},
+		{[]string{" "}, []string{"empty argument"}},
+	} {
+		err := checkArgs(tt.args)
+		if len(tt.want) == 0 {
+			if err != nil {
+				t.Errorf("%q: got %v", tt.args, err)
+			}
+			continue
+		}
+		for _, w := range tt.want {
+			if err == nil || !strings.Contains(err.Error(), w) {
+				t.Errorf("%q: got %v, want %q", tt.args, err, w)
+			}
+		}
 	}
 }

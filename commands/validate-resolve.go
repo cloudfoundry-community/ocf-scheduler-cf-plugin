@@ -38,17 +38,12 @@ func (e *AmbiguousError) Error() string {
 // looked up before anything is treated as an expression: names may contain
 // spaces, and are unique per app, not per space.
 func resolveArgs(args []string, jobs []*scheduler.Job, calls []*scheduler.Call) (resolution, error) {
+	if err := checkArgs(args); err != nil {
+		return resolution{}, err
+	}
 	kinds := []string{"job", "call"}
 	if len(args) >= 2 && (args[0] == "job" || args[0] == "call") {
 		kinds, args = args[:1], args[1:]
-	}
-	if len(args) == 0 || len(args) > 2 {
-		return resolution{}, fmt.Errorf("expected [job|call] NAME-OR-GUID [EXPRESSION], or a quoted EXPRESSION")
-	}
-	for _, arg := range args {
-		if strings.TrimSpace(arg) == "" {
-			return resolution{}, fmt.Errorf("empty argument; quote a cron expression or name a job or call")
-		}
 	}
 	var matches []target
 	for _, kind := range kinds {
@@ -81,4 +76,34 @@ func resolveArgs(args []string, jobs []*scheduler.Job, calls []*scheduler.Call) 
 		return resolution{Expression: args[0]}, nil
 	}
 	return resolution{}, fmt.Errorf("no job or call named %q in this space; quote a cron expression: cf validate-schedule \"0 2 * * *\"", args[0])
+}
+
+// validateUsage is shown when the arguments cannot be read.
+const validateUsage = `USAGE:
+   cf validate-schedule [OPTIONS] CRON-EXPRESSION
+   cf validate-schedule [OPTIONS] [job|call] NAME-OR-GUID [CRON-EXPRESSION]
+
+OPTIONS:
+   --timezone, -t ZONE   Zone for CRON-EXPRESSION; for stored schedules, the zone run times are shown in.
+   --next N              Number of next runs to show (default 5; 1 per stored schedule).
+   --prev N              Number of previous runs to show (default 0).`
+
+// checkArgs rejects argument shapes resolveArgs cannot read, before any
+// request is made.
+func checkArgs(args []string) error {
+	if len(args) >= 2 && (args[0] == "job" || args[0] == "call") {
+		args = args[1:]
+	}
+	switch {
+	case len(args) == 0:
+		return fmt.Errorf("give a cron expression, a job or call, or both\n\n%s", validateUsage)
+	case len(args) > 2:
+		return fmt.Errorf("too many arguments; quote a cron expression: cf validate-schedule \"0 2 * * *\"\n\n%s", validateUsage)
+	}
+	for _, arg := range args {
+		if strings.TrimSpace(arg) == "" {
+			return fmt.Errorf("empty argument; quote a cron expression or name a job or call")
+		}
+	}
+	return nil
 }

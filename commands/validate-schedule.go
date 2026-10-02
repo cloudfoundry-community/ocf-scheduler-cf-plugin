@@ -64,6 +64,9 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		return false, err
 	}
 	timezone := opts.timezone
+	if err := checkArgs(args); err != nil {
+		return false, err // usage errors need no lookups
+	}
 	// fail keeps the "Validating ... in org / space as user" line ahead of
 	// FAILED for errors found before the target is known.
 	fail := func(err error) (bool, error) {
