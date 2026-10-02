@@ -67,3 +67,10 @@ func TestRenderStoredSchedule(t *testing.T) {
 		t.Errorf("got\n%s", b.String())
 	}
 }
+
+func TestFormatRunKeepsLocalUnconverted(t *testing.T) {
+	run := time.Date(2026, 10, 5, 2, 18, 0, 0, time.FixedZone("SRV", 3600))
+	if got := formatRun(run, "Local", []time.Time{run}); got != "Mon 2026-10-05 02:18 SRV" {
+		t.Errorf("got %q", got)
+	}
+}

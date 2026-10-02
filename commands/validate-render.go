@@ -63,9 +63,10 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
 }
 
 // formatRun shows t in the schedule's zone when this machine knows it, with
-// seconds only if some run in the list has them.
+// seconds only if some run in the list has them. "Local" is the server's
+// zone, not this machine's, so t keeps the offset the server sent.
 func formatRun(t time.Time, location string, all []time.Time) string {
-	if loc, err := time.LoadLocation(location); err == nil && location != "" {
+	if loc, err := time.LoadLocation(location); err == nil && location != "" && location != "Local" {
 		t = t.In(loc)
 	}
 	layout := "Mon 2006-01-02 15:04 MST"
