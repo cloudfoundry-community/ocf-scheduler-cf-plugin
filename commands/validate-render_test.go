@@ -25,7 +25,7 @@ func TestRenderAnalysis(t *testing.T) {
 		Warnings:     []scheduler.Finding{{Code: "dst_skipped", Message: "02:18 on 2027-03-14 does not exist in America/Los_Angeles; it runs at 03:18"}},
 	}
 	var b bytes.Buffer
-	renderAnalysis(&b, a)
+	renderAnalysis(&b, a, "")
 	want := `Expression:    CRON_TZ=America/Los_Angeles H(15-45) 2 * * MON-FRI
 Description:   at a hashed minute between 15 and 45 of hour 2, on Monday to Friday, America/Los_Angeles time
 Time zone:     America/Los_Angeles
@@ -51,7 +51,7 @@ func TestRenderParseError(t *testing.T) {
 			Field: "minute", Value: "60", Offset: ptr(0)}},
 	}
 	var b bytes.Buffer
-	renderAnalysis(&b, a)
+	renderAnalysis(&b, a, "")
 	if !strings.HasPrefix(b.String(), "minute field value 60 is out of range (valid: 0-59)\n  60 * * * *\n  ^^\n") {
 		t.Errorf("got\n%s", b.String())
 	}
@@ -62,7 +62,7 @@ func TestRenderStoredSchedule(t *testing.T) {
 		Description: "at 00:00, on day 30 of the month, in February",
 		Errors:      []scheduler.Finding{{Code: "never_fires", Message: "this schedule never runs"}}}
 	var b bytes.Buffer
-	renderAnalysis(&b, a)
+	renderAnalysis(&b, a, "")
 	if !strings.HasPrefix(b.String(), "this schedule never runs\n\nSchedule:      s1 (disabled)\nExpression:    0 0 30 2 *\n") {
 		t.Errorf("got\n%s", b.String())
 	}
@@ -80,8 +80,22 @@ func TestRenderOneRun(t *testing.T) {
 	a := &scheduler.ScheduleAnalysis{Expression: "0 3 1 1 *", Valid: true, Location: "Etc/UTC",
 		NextRuns: []time.Time{run}, PrevRuns: []time.Time{run.AddDate(-1, 0, 0)}}
 	var b bytes.Buffer
-	renderAnalysis(&b, a)
+	renderAnalysis(&b, a, "")
 	if !strings.Contains(b.String(), "\nNext run:\n") || !strings.Contains(b.String(), "\nPrevious run:\n") {
 		t.Errorf("got\n%s", b.String())
+	}
+}
+
+func TestRenderStoredInAnotherZone(t *testing.T) {
+	la, _ := time.LoadLocation("America/Los_Angeles")
+	run := time.Date(2027, 1, 1, 3, 20, 0, 0, la)
+	a := &scheduler.ScheduleAnalysis{ScheduleGUID: "s1", Expression: "CRON_TZ=America/Los_Angeles 20 3 1 1 *",
+		Valid: true, Location: "America/Los_Angeles", NextRuns: []time.Time{run}}
+	var b bytes.Buffer
+	renderAnalysis(&b, a, "America/New_York")
+	for _, want := range []string{"Time zone:     America/Los_Angeles\n", "\nNext run in America/New_York:\n  Fri 2027-01-01 06:20 EST\n"} {
+		if !strings.Contains(b.String(), want) {
+			t.Errorf("missing %q in\n%s", want, b.String())
+		}
 	}
 }

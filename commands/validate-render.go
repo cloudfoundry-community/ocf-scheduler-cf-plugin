@@ -9,7 +9,9 @@ import (
 )
 
 // renderAnalysis prints one validated expression after the OK/FAILED line.
-func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
+// display, when set, is the zone run times are shown in instead of the
+// schedule's own; the schedule still runs in its zone.
+func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string) {
 	if len(a.Errors) > 0 {
 		renderFindings(w, a.Expression, a.Errors)
 		fmt.Fprintln(w)
@@ -38,6 +40,11 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
 		if len(times) == 0 {
 			return
 		}
+		zone := a.Location
+		if display != "" {
+			title += " in " + display
+			zone = display
+		}
 		if a.Illustrative {
 			scope := "the job or call"
 			if a.Ref != nil {
@@ -48,7 +55,7 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, title+":")
 		for _, t := range times {
-			fmt.Fprintln(w, "  "+formatRun(t, a.Location, times))
+			fmt.Fprintln(w, "  "+formatRun(t, zone, times))
 		}
 	}
 	runs(countRuns("Next", len(a.NextRuns)), a.NextRuns)
