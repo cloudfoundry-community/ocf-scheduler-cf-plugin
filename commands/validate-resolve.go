@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"strings"
 
 	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
 )
@@ -37,6 +38,11 @@ func resolveArgs(args []string, jobs []*scheduler.Job, calls []*scheduler.Call) 
 	}
 	if len(args) == 0 || len(args) > 2 {
 		return resolution{}, fmt.Errorf("expected [job|call] NAME-OR-GUID [EXPRESSION], or a quoted EXPRESSION")
+	}
+	for _, arg := range args {
+		if strings.TrimSpace(arg) == "" {
+			return resolution{}, fmt.Errorf("empty argument; quote a cron expression or name a job or call")
+		}
 	}
 	var matches []target
 	for _, kind := range kinds {
