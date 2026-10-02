@@ -1,0 +1,79 @@
+package commands
+
+import (
+	"fmt"
+	"io"
+	"time"
+
+	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
+)
+
+// renderAnalysis prints one validated expression after the OK/FAILED line.
+func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
+	if len(a.Errors) > 0 {
+		renderFindings(w, a.Expression, a.Errors)
+		fmt.Fprintln(w)
+	}
+	label := func(name, value string) { fmt.Fprintf(w, "%-15s%s\n", name+":", value) }
+	if a.ScheduleGUID != "" {
+		state := "enabled"
+		if a.Enabled != nil && !*a.Enabled {
+			state = "disabled"
+		}
+		label("Schedule", a.ScheduleGUID+" ("+state+")")
+	}
+	label("Expression", a.Expression)
+	label("Description", a.Description)
+	if a.Location != "" {
+		label("Time zone", a.Location)
+	}
+	for i, h := range a.HashedFields {
+		name := ""
+		if i == 0 {
+			name = "Hashed:"
+		}
+		fmt.Fprintf(w, "%-15s%s %s → %s\n", name, h.Field, h.Value, h.Resolved)
+	}
+	runs := func(title string, times []time.Time) {
+		if len(times) == 0 {
+			return
+		}
+		if a.Illustrative {
+			scope := "the job or call"
+			if a.Ref != nil {
+				scope = "the " + a.Ref.Type
+			}
+			title += " (illustrative, H values depend on " + scope + ")"
+		}
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, title+":")
+		for _, t := range times {
+			fmt.Fprintln(w, "  "+formatRun(t, a.Location, times))
+		}
+	}
+	runs(fmt.Sprintf("Next %d runs", len(a.NextRuns)), a.NextRuns)
+	runs(fmt.Sprintf("Previous %d runs", len(a.PrevRuns)), a.PrevRuns)
+	if len(a.Warnings) > 0 {
+		fmt.Fprintln(w)
+		fmt.Fprintln(w, "Warnings:")
+		for _, f := range a.Warnings {
+			fmt.Fprintln(w, "  "+f.Message)
+		}
+	}
+}
+
+// formatRun shows t in the schedule's zone when this machine knows it, with
+// seconds only if some run in the list has them.
+func formatRun(t time.Time, location string, all []time.Time) string {
+	if loc, err := time.LoadLocation(location); err == nil && location != "" {
+		t = t.In(loc)
+	}
+	layout := "Mon 2006-01-02 15:04 MST"
+	for _, other := range all {
+		if other.Second() != 0 {
+			layout = "Mon 2006-01-02 15:04:05 MST"
+			break
+		}
+	}
+	return t.Format(layout)
+}
