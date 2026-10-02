@@ -56,6 +56,7 @@ func TestValidateRejected(t *testing.T) {
 		{http.StatusNotFound, `{"errors":[{"code":"ref_not_found","message":"job g not found"}],"warnings":[]}`, "job g not found"},
 		{http.StatusUnprocessableEntity, `{"errors":[{"code":"bad_request","message":"next and prev must be 0 to 100"}],"warnings":[]}`, "next and prev must be 0 to 100"},
 		{http.StatusUnauthorized, `""`, "response status: 401"},
+		{http.StatusUnprocessableEntity, `"expected exactly 5 fields, found 6: [0 0 0 * * *]"`, "expected exactly 5 fields, found 6: [0 0 0 * * *]"},
 	} {
 		_, err := ValidateExpression(serve(t, tt.status, tt.body), scheduler.ValidateRequest{Expression: "x"})
 		var rejected *RejectedError
