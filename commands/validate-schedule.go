@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/pflag"
 
@@ -40,7 +41,7 @@ func parseValidateFlags(args []string) (validateOptions, []string, error) {
 	var opts validateOptions
 	var next int
 	flags := pflag.NewFlagSet("validate-schedule", pflag.ExitOnError)
-	flags.StringVarP(&opts.timezone, "timezone", "t", "", "Interpret Cron Expression relative to the given timezone")
+	flags.StringVarP(&opts.timezone, "timezone", "t", "", "Time zone for the expression; for stored schedules, the zone run times are shown in")
 	flags.IntVar(&next, "next", 0, "Number of next runs to show (default 5; 1 per stored schedule)")
 	flags.IntVar(&opts.prev, "prev", 0, "Number of previous runs to show")
 	flags.Parse(args)
@@ -97,13 +98,17 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 	}
 
 	req := scheduler.ValidateRequest{Prev: opts.prev, Next: opts.next}
+	display := "" // stored schedules: -t only changes the zone runs are shown in
 	if r.Expression != "" {
 		req.Expression = strings.TrimSpace(r.Expression)
 		if timezone != "" {
 			req.Expression = fmt.Sprintf("CRON_TZ=%s %s", timezone, req.Expression)
 		}
 	} else if timezone != "" {
-		return fail(fmt.Errorf("--timezone needs an expression"))
+		if _, err := time.LoadLocation(timezone); err != nil {
+			return fail(fmt.Errorf("unknown time zone %q", timezone))
+		}
+		display = timezone
 	}
 	action := "Validating cron expression"
 	if r.Target != nil {
@@ -124,7 +129,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		}
 		fmt.Println(verdict(a.Valid))
 		fmt.Println()
-		renderAnalysis(os.Stdout, a)
+		renderAnalysis(os.Stdout, a, display)
 		return a.Valid, nil
 	}
 
@@ -146,7 +151,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 	}
 	for _, a := range stored.Resources {
 		fmt.Println()
-		renderAnalysis(os.Stdout, a)
+		renderAnalysis(os.Stdout, a, display)
 	}
 	return valid, nil
 }
