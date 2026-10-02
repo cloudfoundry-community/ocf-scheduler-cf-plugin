@@ -21,10 +21,14 @@ var ErrValidationUnsupported = errors.New("this scheduler does not support valid
 type RejectedError struct {
 	Status   int
 	Findings scheduler.Findings
+	Message  string // a bare JSON string body, as older schedulers send
 }
 
 func (e *RejectedError) Error() string {
 	if len(e.Findings.Errors) == 0 {
+		if e.Message != "" {
+			return e.Message
+		}
 		return fmt.Sprintf("response status: %d", e.Status)
 	}
 	return e.Findings.Errors[0].Message
@@ -66,12 +70,13 @@ func validate(driver *core.Driver, req scheduler.ValidateRequest, out any) error
 	return rejected(status, data)
 }
 
-// rejected decodes a 4xx body of {errors, warnings}; any other body is
-// reported by status alone.
+// rejected decodes a 4xx body of {errors, warnings} or, from an older
+// scheduler, a bare JSON string; any other body is reported by status alone.
 func rejected(status int, data []byte) error {
 	e := &RejectedError{Status: status}
 	if json.Unmarshal(data, &e.Findings) != nil {
 		e.Findings = scheduler.Findings{}
+		json.Unmarshal(data, &e.Message)
 	}
 	return e
 }
