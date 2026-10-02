@@ -1,10 +1,10 @@
 # Cron Expression Reference
 
-The OCF Scheduler uses `cron expression` notation for all schedules. Expressions are parsed by the [go-cron](https://github.com/netresearch/go-cron) library using its standard parser, which supports standard cron syntax, extended day-of-month/day-of-week syntax, descriptor shortcuts, and timezone prefixes.
+The OCF Scheduler uses `cron expression` notation for all schedules. Expressions are parsed by the [go-cron](https://github.com/netresearch/go-cron) library, which supports standard cron syntax, optional seconds and year fields, extended day-of-month/day-of-week syntax, descriptor shortcuts, and timezone prefixes.
 
 ## Standard Cron Fields
 
-The core format are 5 required fields:
+By default an expression has 5 fields:
 
 ```
 minute hour day-of-month(DOM) month day-of-week(DOW)
@@ -17,6 +17,24 @@ minute hour day-of-month(DOM) month day-of-week(DOW)
 | Day of Month | Yes | `1-31` | None |
 | Month | Yes | `1-12` | `JAN`-`DEC` (case-insensitive) |
 | Day of Week | Yes | `0-7` (0 and 7 both represent Sunday) | `SUN`-`SAT` (case-insensitive) |
+
+When both day-of-month and day-of-week are restricted, a day must match **both**. `0 4 1 * MON` runs at 4:00 AM only on a 1st of the month that falls on a Monday. Use `*` or `?` in one of the two fields to match on the other alone.
+
+### Optional Seconds and Year Fields
+
+Two more fields can be added around the default five:
+
+```
+second minute hour day-of-month month day-of-week          (6 fields)
+second minute hour day-of-month month day-of-week year     (7 fields)
+```
+
+| Field | Range |
+|---|---|
+| Second | `0-59` |
+| Year | `100` and above, e.g. `2027` or `2027-2030` |
+
+With 6 fields the first field is seconds, unless the last field is a value of 100 or more, in which case it is a year: `30 0 9 * * *` runs at 9:00:30 AM daily, while `0 9 * * * 2027` runs at 9:00 AM daily during 2027.
 
 ### Operators
 
@@ -121,7 +139,7 @@ TZ=Europe/Berlin 30 14 * * MON-FRI
 
 Both `CRON_TZ=` and `TZ=` are supported and behave identically.
 
-> **Do not combine both methods.** If you use the `--timezone` flag, do not also include a `TZ=` or `CRON_TZ=` prefix in the expression. The flag works by prepending `CRON_TZ=` to the expression, so using both would produce a malformed expression with two timezone prefixes.
+> **Do not combine both methods.** If you use the `--timezone` flag, do not also include a `TZ=` or `CRON_TZ=` prefix in the expression. The flag works by prepending `CRON_TZ=` to the expression, so using both produces an expression with two timezone prefixes, which the scheduler rejects.
 
 ### Listing available timezones
 
@@ -133,7 +151,7 @@ The timezone value must be a valid [IANA timezone name](https://en.wikipedia.org
 
 The scheduler handles DST transitions automatically:
 
-- **Spring forward** (clocks skip an hour) — jobs scheduled during the skipped hour run immediately after the transition.
+- **Spring forward** (clocks skip an hour) — jobs scheduled during the skipped hour run at the same minute of the following hour: a 2:30 AM job runs at 3:30 AM.
 - **Fall back** (clocks repeat an hour) — jobs scheduled during the repeated hour run once, during the first occurrence.
 
 To avoid surprises around DST transitions, schedule time-sensitive jobs outside the typical 1:00–3:00 AM transition window, or use a timezone that does not observe DST (e.g. `UTC`, `America/Phoenix`).
