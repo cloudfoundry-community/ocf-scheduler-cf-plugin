@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/ess/hype"
 )
@@ -21,6 +22,10 @@ type Driver struct {
 }
 
 var Client *Driver
+
+// httpClient matches hype's 20 s timeout, so a hung scheduler fails
+// instead of hanging the command.
+var httpClient = &http.Client{Timeout: 20 * time.Second}
 
 func NewDriver(baseURL string, token string) (*Driver, error) {
 	// TODO: figure out how to make this configurable
@@ -84,7 +89,7 @@ func (driver *Driver) PostJSON(path string, data []byte) (int, []byte, error) {
 	for _, header := range []*hype.Header{driver.accept, driver.contentType, driver.auth, driver.userAgent} {
 		req.Header.Set(header.Name, header.Value)
 	}
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := httpClient.Do(req)
 	if err != nil {
 		return 0, nil, err
 	}
