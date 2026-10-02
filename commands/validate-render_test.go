@@ -74,3 +74,14 @@ func TestFormatRunKeepsLocalUnconverted(t *testing.T) {
 		t.Errorf("got %q", got)
 	}
 }
+
+func TestRenderOneRun(t *testing.T) {
+	run := time.Date(2027, 1, 1, 3, 0, 0, 0, time.UTC)
+	a := &scheduler.ScheduleAnalysis{Expression: "0 3 1 1 *", Valid: true, Location: "Etc/UTC",
+		NextRuns: []time.Time{run}, PrevRuns: []time.Time{run.AddDate(-1, 0, 0)}}
+	var b bytes.Buffer
+	renderAnalysis(&b, a)
+	if !strings.Contains(b.String(), "\nNext run:\n") || !strings.Contains(b.String(), "\nPrevious run:\n") {
+		t.Errorf("got\n%s", b.String())
+	}
+}

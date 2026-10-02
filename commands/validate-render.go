@@ -51,8 +51,8 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis) {
 			fmt.Fprintln(w, "  "+formatRun(t, a.Location, times))
 		}
 	}
-	runs(fmt.Sprintf("Next %d runs", len(a.NextRuns)), a.NextRuns)
-	runs(fmt.Sprintf("Previous %d runs", len(a.PrevRuns)), a.PrevRuns)
+	runs(countRuns("Next", len(a.NextRuns)), a.NextRuns)
+	runs(countRuns("Previous", len(a.PrevRuns)), a.PrevRuns)
 	if len(a.Warnings) > 0 {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, "Warnings:")
@@ -77,4 +77,12 @@ func formatRun(t time.Time, location string, all []time.Time) string {
 		}
 	}
 	return t.Format(layout)
+}
+
+// countRuns titles a run list: "Next run", "Next 5 runs".
+func countRuns(which string, n int) string {
+	if n == 1 {
+		return which + " run"
+	}
+	return fmt.Sprintf("%s %d runs", which, n)
 }
