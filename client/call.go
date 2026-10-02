@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
 	"sort"
 
 	models "code.cloudfoundry.org/cli/plugin/models"
@@ -187,13 +188,16 @@ func ScheduleCall(driver *core.Driver, call *scheduler.Call, expression string) 
 		return nil, err
 	}
 
-	response := driver.Post("calls/"+call.GUID+"/schedules", nil, input)
-	if !response.Okay() {
-		return nil, response.Error()
+	status, data, err := driver.PostJSON("calls/"+call.GUID+"/schedules", input)
+	if err != nil {
+		return nil, err
+	}
+	if status != http.StatusCreated {
+		return nil, rejected(status, data)
 	}
 
 	output := &scheduler.Schedule{}
-	err = json.Unmarshal(response.Data(), output)
+	err = json.Unmarshal(data, output)
 	if err != nil {
 		return nil, err
 	}
