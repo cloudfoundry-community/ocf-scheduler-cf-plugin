@@ -80,6 +80,13 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				},
 			},
 			{
+				Name:     "validate-schedule",
+				HelpText: "Checks a cron expression, alone or for a job or call, or re-checks the schedules of a job or call.",
+				UsageDetails: plugin.Usage{
+					Usage: "cf validate-schedule [OPTIONS] CRON-EXPRESSION\n   cf validate-schedule [OPTIONS] [job|call] NAME-OR-GUID [CRON-EXPRESSION]\n\nWHERE\n   CRON-EXPRESSION is a quoted cron schedule, by default 5 fields \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n   NAME-OR-GUID is a job or call; without CRON-EXPRESSION its stored schedules are re-checked\n   job or call is needed only when a job and a call share the name\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n   --next int                 Number of next runs to show (default 5; 1 per stored schedule).\n   --prev int                 Number of previous runs to show (default 0).\n\nExits 1 when an expression is invalid.\n\nSEE ALSO:\n   help-schedule, schedule-job, schedule-call",
+				},
+			},
+			{
 				Name:     "create-job",
 				HelpText: "Creates a job (task) related to an app.",
 				UsageDetails: plugin.Usage{
@@ -97,7 +104,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "schedule-job",
 				HelpText: "Schedules the named job (task) to run based on the given cron schedule.",
 				UsageDetails: plugin.Usage{
-					Usage: "cf schedule-job [OPTIONS] JOB-NAME CRON-EXPRESSION\n\nWHERE\n   JOB-NAME is the name of the created job\n   CRON-EXPRESSION is a cron schedule, by default 5 fields \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   help-schedule, scheduler-time-zones",
+					Usage: "cf schedule-job [OPTIONS] JOB-NAME CRON-EXPRESSION\n\nWHERE\n   JOB-NAME is the name of the created job\n   CRON-EXPRESSION is a cron schedule, by default 5 fields \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   help-schedule, validate-schedule, scheduler-time-zones",
 				},
 			},
 			{
@@ -154,7 +161,7 @@ func (c *OCFScheduler) GetMetadata() plugin.PluginMetadata {
 				Name:     "schedule-call",
 				HelpText: "Schedules a call to be run based on the supplied cron schedule",
 				UsageDetails: plugin.Usage{
-					Usage: "cf schedule-call [OPTIONS] CALL-NAME CRON-EXPRESSION\n\nWHERE\n   CALL-NAME is a name for the scheduled call\n   CRON-EXPRESSION is a cron schedule, by default 5 fields \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   help-schedule, scheduler-time-zones",
+					Usage: "cf schedule-call [OPTIONS] CALL-NAME CRON-EXPRESSION\n\nWHERE\n   CALL-NAME is a name for the scheduled call\n   CRON-EXPRESSION is a cron schedule, by default 5 fields \"MINUTE HOUR DAY-OF-MONTH MONTH DAY-OF-WEEK\"\n\nOPTIONS:\n   --timezone[=], -t string   Specifies a timezone to interpret the cron expression relative to.\n\nSEE ALSO:\n   help-schedule, validate-schedule, scheduler-time-zones",
 				},
 			},
 			{
@@ -309,6 +316,9 @@ func (c *OCFScheduler) Run(cliConnection plugin.CliConnection, args []string) {
 
 	case "scheduler-time-zones":
 		commands.SchedulerTimeZones(services, args)
+
+	case "validate-schedule":
+		commands.ValidateSchedule(services, args)
 	}
 }
 
