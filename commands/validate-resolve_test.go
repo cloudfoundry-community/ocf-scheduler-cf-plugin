@@ -45,6 +45,8 @@ func TestResolveArgs(t *testing.T) {
 		{[]string{"0", "2", "*", "*", "*"}, "", "", "expected [job|call]"},
 		{[]string{"0", "2 * * *"}, "", "", "quote a cron expression"},
 		{nil, "", "", "expected [job|call]"},
+		{[]string{" "}, "", "", "empty argument"},
+		{[]string{"backup", " "}, "", "", "empty argument"},
 	}
 	for _, tt := range tests {
 		got, err := resolveArgs(tt.args, jobs, calls)
