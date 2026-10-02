@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
+	"unicode"
 
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/glamour/styles"
@@ -32,18 +34,7 @@ func main() {
 
 	rendered := make(map[string]string, len(names))
 	for _, name := range names {
-		renderer, err := glamour.NewTermRenderer(
-			glamour.WithStylePath(name),
-			// glamour.WithStylesFromJSONBytes(tableStyle),
-			glamour.WithWordWrap(78),
-			glamour.WithTableWrap(true),
-		)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error creating renderer for style %q: %v\n", name, err)
-			os.Exit(1)
-		}
-
-		out, err := renderer.Render(string(src))
+		out, err := render(string(src), name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error rendering markdown with style %q: %v\n", name, err)
 			os.Exit(1)
@@ -60,16 +51,7 @@ func main() {
 			// Neither notty nor ascii from glamour — render with NoTTY options.
 			styleName = "notty"
 		}
-		renderer, err := glamour.NewTermRenderer(
-			glamour.WithStylePath(styleName),
-			glamour.WithWordWrap(78),
-			glamour.WithTableWrap(true),
-		)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error creating fallback notty renderer: %v\n", err)
-			os.Exit(1)
-		}
-		out, err := renderer.Render(string(src))
+		out, err := render(string(src), styleName)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error rendering fallback notty style: %v\n", err)
 			os.Exit(1)
@@ -95,4 +77,40 @@ func main() {
 		fmt.Fprintf(f, "\t%q: %q,\n", name, rendered[name])
 	}
 	fmt.Fprintln(f, "}")
+}
+
+func render(src, style string) (string, error) {
+	renderer, err := glamour.NewTermRenderer(
+		glamour.WithStylePath(style),
+		// glamour.WithStylesFromJSONBytes(tableStyle),
+		glamour.WithWordWrap(78),
+		glamour.WithTableWrap(true),
+	)
+	if err != nil {
+		return "", err
+	}
+	out, err := renderer.Render(protectHyphens(src))
+	return strings.ReplaceAll(out, nbHyphen, "-"), err
+}
+
+// nbHyphen stands in for "-" while rendering. glamour's paragraph wrap
+// (muesli/reflow) breaks at hyphens but does not count them toward the
+// line length, so lines run long and the document margin re-wraps them,
+// leaving one-word orphan lines.
+const nbHyphen = "‑"
+
+// protectHyphens swaps hyphens inside words for nbHyphen, leaving
+// markdown syntax such as table rules and list markers alone.
+func protectHyphens(s string) string {
+	r := []rune(s)
+	for i := 1; i < len(r)-1; i++ {
+		if r[i] == '-' && !isMarkup(r[i-1]) && !isMarkup(r[i+1]) {
+			r[i] = []rune(nbHyphen)[0]
+		}
+	}
+	return string(r)
+}
+
+func isMarkup(c rune) bool {
+	return c == '-' || c == '|' || c == ':' || unicode.IsSpace(c)
 }
