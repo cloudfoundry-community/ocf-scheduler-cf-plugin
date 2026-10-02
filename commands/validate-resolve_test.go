@@ -40,7 +40,7 @@ func TestResolveArgs(t *testing.T) {
 		{[]string{"call", "both"}, "call/c2", "", ""},
 		{[]string{"job"}, "", "job", ""}, // a lone word is an expression unless something is named "job"
 		{[]string{"both"}, "", "", "matches 2 jobs or calls"},
-		{[]string{"dup"}, "", "", "matches 2 jobs or calls"},
+		{[]string{"dup"}, "", "", "matches 2 jobs; use the GUID"},
 		{[]string{"call", "backup"}, "", "", `no call named "backup"`},
 		{[]string{"0", "2", "*", "*", "*"}, "", "", "expected [job|call]"},
 		{[]string{"0", "2 * * *"}, "", "", "quote a cron expression"},

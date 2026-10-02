@@ -25,7 +25,13 @@ type AmbiguousError struct {
 }
 
 func (e *AmbiguousError) Error() string {
-	return fmt.Sprintf("%q matches %d jobs or calls; put job or call before it, or use the GUID", e.Name, len(e.Matches))
+	for _, m := range e.Matches[1:] {
+		if m.Type != e.Matches[0].Type {
+			return fmt.Sprintf("%q matches %d jobs or calls; put job or call before it, or use the GUID", e.Name, len(e.Matches))
+		}
+	}
+	// Same type on different apps: only the GUID tells them apart.
+	return fmt.Sprintf("%q matches %d %ss; use the GUID", e.Name, len(e.Matches), e.Matches[0].Type)
 }
 
 // resolveArgs reads [job|call] [NAME|GUID] [EXPRESSION]. A name or GUID is
