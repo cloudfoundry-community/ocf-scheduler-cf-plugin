@@ -1,13 +1,17 @@
 package core
 
 import (
+	"bytes"
 	"crypto/tls"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/ess/hype"
 )
 
 type Driver struct {
+	baseURL     string
 	raw         *hype.Driver
 	token       string
 	accept      *hype.Header
@@ -28,6 +32,7 @@ func NewDriver(baseURL string, token string) (*Driver, error) {
 	}
 
 	d := &Driver{
+		baseURL,
 		raw,
 		token,
 		hype.NewHeader("Accept", "application/json"),
@@ -66,4 +71,24 @@ func (driver *Driver) Post(path string, params hype.Params, data []byte) hype.Re
 		Post(path, params, data).
 		WithHeaderSet(driver.accept, driver.contentType, driver.auth).
 		Response()
+}
+
+// PostJSON posts data and returns the status and body whatever the status.
+// hype drops the body of a non-2xx response; the validation errors are in it.
+func (driver *Driver) PostJSON(path string, data []byte) (int, []byte, error) {
+	url := strings.TrimRight(driver.baseURL, "/") + "/" + path
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewReader(data))
+	if err != nil {
+		return 0, nil, err
+	}
+	for _, header := range []*hype.Header{driver.accept, driver.contentType, driver.auth, driver.userAgent} {
+		req.Header.Set(header.Name, header.Value)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	return resp.StatusCode, body, err
 }
