@@ -26,6 +26,9 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string) 
 	}
 	label("Expression", a.Expression)
 	label("Description", a.Description)
+	if a.DescriptionNote != "" {
+		label("Note", a.DescriptionNote)
+	}
 	if a.Location != "" {
 		label("Time zone", a.Location)
 	}

@@ -43,6 +43,21 @@ Warnings:
 	}
 }
 
+func TestRenderDescriptionNote(t *testing.T) {
+	a := &scheduler.ScheduleAnalysis{Expression: "H/15 * * * *", Valid: true,
+		Description:     "every 15 minutes from a hashed start",
+		DescriptionNote: "at minutes h, h+15, h+30 and h+45 of every hour, where h is a hashed minute from 0 to 14"}
+	var b bytes.Buffer
+	renderAnalysis(&b, a, "")
+	want := `Expression:    H/15 * * * *
+Description:   every 15 minutes from a hashed start
+Note:          at minutes h, h+15, h+30 and h+45 of every hour, where h is a hashed minute from 0 to 14
+`
+	if b.String() != want {
+		t.Errorf("got\n%s\nwant\n%s", b.String(), want)
+	}
+}
+
 func TestRenderParseError(t *testing.T) {
 	a := &scheduler.ScheduleAnalysis{
 		Expression:  "60 * * * *",
