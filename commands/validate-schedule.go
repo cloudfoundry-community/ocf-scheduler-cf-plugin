@@ -64,27 +64,33 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		return false, err
 	}
 	timezone := opts.timezone
+	// fail keeps the "Validating ... in org / space as user" line ahead of
+	// FAILED for errors found before the target is known.
+	fail := func(err error) (bool, error) {
+		core.PrintActionInProgress(services, "%s", "Validating schedule")
+		return false, err
+	}
 
 	space, err := core.MySpace(services)
 	if err != nil {
-		return false, fmt.Errorf("Could not get current space.")
+		return fail(fmt.Errorf("Could not get current space."))
 	}
 	jobs, err := client.ListJobs(services.Client, space)
 	if err != nil {
-		return false, fmt.Errorf("Could not get jobs for space %s.", space.Name)
+		return fail(fmt.Errorf("Could not get jobs for space %s.", space.Name))
 	}
 	calls, err := client.ListCalls(services.Client, space)
 	if err != nil {
-		return false, fmt.Errorf("Could not get calls for space %s.", space.Name)
+		return fail(fmt.Errorf("Could not get calls for space %s.", space.Name))
 	}
 
 	r, err := resolveArgs(args, jobs, calls)
 	var amb *AmbiguousError
 	if errors.As(err, &amb) {
-		return false, ambiguity(services, amb)
+		return fail(ambiguity(services, amb))
 	}
 	if err != nil {
-		return false, err
+		return fail(err)
 	}
 
 	req := scheduler.ValidateRequest{Prev: opts.prev, Next: opts.next}
@@ -94,7 +100,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 			req.Expression = fmt.Sprintf("CRON_TZ=%s %s", timezone, req.Expression)
 		}
 	} else if timezone != "" {
-		return false, fmt.Errorf("--timezone needs an expression")
+		return fail(fmt.Errorf("--timezone needs an expression"))
 	}
 	action := "Validating cron expression"
 	if r.Target != nil {
