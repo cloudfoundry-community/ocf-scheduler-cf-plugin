@@ -42,7 +42,7 @@ func ScheduleCall(services *core.Services, args []string) {
 
 	call, err := client.CallNamed(services.Client, space, name)
 	if err != nil {
-		fmt.Printf("Could not find job named %s in space %s.\n", name, space.Name)
+		fmt.Printf("Could not find call named %s in space %s.\n", name, space.Name)
 		return
 	}
 
