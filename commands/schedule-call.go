@@ -48,7 +48,8 @@ func ScheduleCall(services *core.Services, args []string) {
 
 	schedule, err := client.ScheduleCall(services.Client, call, cronExpression)
 	if err != nil {
-		fmt.Println("Could not schedule call: " + err.Error())
+		fmt.Printf("Could not schedule call %s with the expression %s.\n", name, cronExpression)
+		printRejection(err, cronExpression)
 		return
 	}
 
