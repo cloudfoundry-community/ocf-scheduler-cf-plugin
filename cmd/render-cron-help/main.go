@@ -96,7 +96,12 @@ func render(src, style string) (string, error) {
 // nbHyphen stands in for "-" while rendering. glamour's paragraph wrap
 // (muesli/reflow) breaks at hyphens but does not count them toward the
 // line length, so lines run long and the document margin re-wraps them,
-// leaving one-word orphan lines.
+// leaving one-word orphan lines. Drop this once a fix ships:
+//
+//	https://github.com/muesli/reflow/issues/66
+//	https://github.com/muesli/reflow/pull/79
+//	https://github.com/charmbracelet/glamour/issues/407
+//	https://github.com/charmbracelet/glamour/issues/451
 const nbHyphen = "‑"
 
 // protectHyphens swaps hyphens inside words for nbHyphen, leaving
