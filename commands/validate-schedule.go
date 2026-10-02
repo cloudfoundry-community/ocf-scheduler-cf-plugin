@@ -28,20 +28,42 @@ func ValidateSchedule(services *core.Services, args []string) {
 	}
 }
 
-func validateSchedule(services *core.Services, args []string) (bool, error) {
-	var timezone string
-	var next, prev int
-	flags := pflag.NewFlagSet("validate-schedule", pflag.ExitOnError)
-	flags.StringVarP(&timezone, "timezone", "t", "", "Interpret Cron Expression relative to the given timezone")
-	flags.IntVar(&next, "next", -1, "Number of next runs to show (default 5; 1 per stored schedule)")
-	flags.IntVar(&prev, "prev", 0, "Number of previous runs to show")
-	flags.Parse(args)
-	args = flags.Args()[1:]
+type validateOptions struct {
+	timezone string
+	next     *int // nil: the scheduler's default
+	prev     int
+}
 
-	timezone = strings.TrimSpace(timezone)
-	if strings.Contains(timezone, " ") {
-		return false, fmt.Errorf("no spaces allowed in the timezone")
+// parseValidateFlags reads the options; args starts with the command name,
+// which rest drops.
+func parseValidateFlags(args []string) (validateOptions, []string, error) {
+	var opts validateOptions
+	var next int
+	flags := pflag.NewFlagSet("validate-schedule", pflag.ExitOnError)
+	flags.StringVarP(&opts.timezone, "timezone", "t", "", "Interpret Cron Expression relative to the given timezone")
+	flags.IntVar(&next, "next", 0, "Number of next runs to show (default 5; 1 per stored schedule)")
+	flags.IntVar(&opts.prev, "prev", 0, "Number of previous runs to show")
+	flags.Parse(args)
+
+	opts.timezone = strings.TrimSpace(opts.timezone)
+	if strings.Contains(opts.timezone, " ") {
+		return opts, nil, fmt.Errorf("no spaces allowed in the timezone")
 	}
+	if flags.Changed("next") {
+		if next < 0 {
+			return opts, nil, fmt.Errorf("--next must be 0 or more")
+		}
+		opts.next = &next
+	}
+	return opts, flags.Args()[1:], nil
+}
+
+func validateSchedule(services *core.Services, args []string) (bool, error) {
+	opts, args, err := parseValidateFlags(args)
+	if err != nil {
+		return false, err
+	}
+	timezone := opts.timezone
 
 	space, err := core.MySpace(services)
 	if err != nil {
@@ -65,10 +87,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		return false, err
 	}
 
-	req := scheduler.ValidateRequest{Prev: prev}
-	if next >= 0 {
-		req.Next = &next
-	}
+	req := scheduler.ValidateRequest{Prev: opts.prev, Next: opts.next}
 	if r.Expression != "" {
 		req.Expression = strings.TrimSpace(r.Expression)
 		if timezone != "" {
