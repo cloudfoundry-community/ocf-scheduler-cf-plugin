@@ -5,14 +5,14 @@ go 1.26.0
 require (
 	code.cloudfoundry.org/cli v0.0.0-20250512223002-f10828d071cc
 	github.com/charmbracelet/glamour v0.10.0
-	github.com/cloudfoundry-community/ocf-scheduler v1.0.4-0.20260727155646-a3fd09e38f0b
+	github.com/cloudfoundry-community/ocf-scheduler v1.0.4-0.20261003090526-2fd5122dfd3b
 	github.com/cloudfoundry/cf-acceptance-tests v1.9.1-0.20220405181007-a6e4d7ae3b33
 	github.com/cloudfoundry/cf-test-helpers v1.0.1-0.20220329060630-a1956dba8c6c
 	github.com/ess/hype v1.1.5
 	github.com/onsi/ginkgo/v2 v2.27.5
 	github.com/onsi/gomega v1.38.3
 	github.com/spf13/pflag v1.0.10
-	golang.org/x/term v0.43.0
+	golang.org/x/term v0.44.0
 	k8s.io/apimachinery v0.32.11
 )
 
@@ -53,7 +53,7 @@ require (
 	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
+	github.com/mattn/go-colorable v0.1.15 // indirect
 	github.com/mattn/go-isatty v0.0.22 // indirect
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
@@ -69,13 +69,13 @@ require (
 	github.com/yuin/goldmark v1.7.8 // indirect
 	github.com/yuin/goldmark-emoji v1.0.5 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
-	golang.org/x/mod v0.35.0 // indirect
-	golang.org/x/net v0.55.0 // indirect
-	golang.org/x/sync v0.20.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
-	golang.org/x/text v0.37.0 // indirect
-	golang.org/x/tools v0.44.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
+	golang.org/x/mod v0.37.0 // indirect
+	golang.org/x/net v0.56.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
+	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/tools v0.47.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
