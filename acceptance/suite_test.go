@@ -8,8 +8,8 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 
-	"github.com/cloudfoundry/cf-acceptance-tests/helpers/random_name"
-	"github.com/cloudfoundry/cf-test-helpers/cf"
+	"github.com/cloudfoundry/cf-test-helpers/v2/cf"
+	"github.com/cloudfoundry/cf-test-helpers/v2/generator"
 )
 
 func TestSuite(t *testing.T) {
@@ -21,7 +21,7 @@ func TestSuite(t *testing.T) {
 var appName string
 
 var _ = BeforeSuite(func() {
-	appName = random_name.CATSRandomName("APP")
+	appName = generator.PrefixedRandomName("CATS", "APP")
 
 	// This command is expensive, lets do it only once.
 	Expect(cf.Cf("push", appName,
