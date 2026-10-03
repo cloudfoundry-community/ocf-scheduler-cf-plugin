@@ -86,7 +86,9 @@ const validateUsage = `USAGE:
 OPTIONS:
    --timezone, -t ZONE   Zone for CRON-EXPRESSION; for stored schedules, the zone run times are shown in.
    --next N              Number of next runs to show (default 5; 1 per stored schedule).
-   --prev N              Number of previous runs to show (default 0).`
+   --prev N              Number of previous runs to show (default 0).
+   --from TIME           List runs from TIME instead of now: 2030-01-01, 2030-01-01T09:00
+                         (in the -t zone, else UTC) or RFC 3339 2030-01-01T09:00:00Z.`
 
 // checkArgs rejects argument shapes resolveArgs cannot read, before any
 // request is made.
