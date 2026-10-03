@@ -9,8 +9,8 @@ import (
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 
-	"github.com/cloudfoundry/cf-acceptance-tests/helpers/random_name"
-	"github.com/cloudfoundry/cf-test-helpers/cf"
+	"github.com/cloudfoundry/cf-test-helpers/v2/cf"
+	"github.com/cloudfoundry/cf-test-helpers/v2/generator"
 )
 
 var _ = Describe("Scheduler Jobs", func() {
@@ -19,7 +19,7 @@ var _ = Describe("Scheduler Jobs", func() {
 	)
 
 	BeforeEach(func() {
-		jobName = random_name.CATSRandomName("JOB")
+		jobName = generator.PrefixedRandomName("CATS", "JOB")
 	})
 
 	AfterEach(func() {
