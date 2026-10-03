@@ -20,12 +20,16 @@ func TestSuite(t *testing.T) {
 
 var appName string
 
+// memory sizes the test app and the tasks its jobs run; a hello-world
+// app needs far less than the 1024M task default.
+const memory = "64M"
+
 var _ = BeforeSuite(func() {
 	appName = generator.PrefixedRandomName("CATS", "APP")
 
 	// This command is expensive, lets do it only once.
 	Expect(cf.Cf("push", appName,
-		"-m", "256M",
+		"-m", memory,
 		"-p", "assets/golang",
 		"-f", "assets/golang/manifest.yml",
 	).Wait(time.Second * 600)).To(Exit(0))
