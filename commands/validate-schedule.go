@@ -33,6 +33,7 @@ type validateOptions struct {
 	timezone string
 	next     *int // nil: the scheduler's default
 	prev     int
+	from     *time.Time // nil: now
 }
 
 // parseValidateFlags reads the options; args starts with the command name,
@@ -40,10 +41,12 @@ type validateOptions struct {
 func parseValidateFlags(args []string) (validateOptions, []string, error) {
 	var opts validateOptions
 	var next int
+	var from string
 	flags := pflag.NewFlagSet("validate-schedule", pflag.ExitOnError)
 	flags.StringVarP(&opts.timezone, "timezone", "t", "", "Time zone for the expression; for stored schedules, the zone run times are shown in")
 	flags.IntVar(&next, "next", 0, "Number of next runs to show (default 5; 1 per stored schedule)")
 	flags.IntVar(&opts.prev, "prev", 0, "Number of previous runs to show")
+	flags.StringVar(&from, "from", "", "List runs from this time instead of now")
 	flags.Parse(args)
 
 	opts.timezone = strings.TrimSpace(opts.timezone)
@@ -56,7 +59,36 @@ func parseValidateFlags(args []string) (validateOptions, []string, error) {
 		}
 		opts.next = &next
 	}
+	if from != "" {
+		t, err := parseFrom(strings.TrimSpace(from), opts.timezone)
+		if err != nil {
+			return opts, nil, err
+		}
+		opts.from = &t
+	}
 	return opts, flags.Args()[1:], nil
+}
+
+// parseFrom reads --from: RFC 3339, or a date or a date and time without an
+// offset, read in zone (UTC when zone is empty).
+func parseFrom(s, zone string) (time.Time, error) {
+	if t, err := time.Parse(time.RFC3339, s); err == nil {
+		return t, nil
+	}
+	loc := time.UTC
+	if zone != "" {
+		l, err := time.LoadLocation(zone)
+		if err != nil {
+			return time.Time{}, fmt.Errorf("unknown time zone %q", zone)
+		}
+		loc = l
+	}
+	for _, layout := range []string{"2006-01-02T15:04", "2006-01-02"} {
+		if t, err := time.ParseInLocation(layout, s, loc); err == nil {
+			return t, nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("--from must be a date (2030-01-01), a date and time (2030-01-01T09:00) or RFC 3339 (2030-01-01T09:00:00Z)")
 }
 
 func validateSchedule(services *core.Services, args []string) (bool, error) {
@@ -97,7 +129,11 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		return fail(err)
 	}
 
-	req := scheduler.ValidateRequest{Prev: opts.prev, Next: opts.next}
+	req := scheduler.ValidateRequest{Prev: opts.prev, Next: opts.next, From: opts.from}
+	var from time.Time
+	if opts.from != nil {
+		from = *opts.from
+	}
 	display := "" // stored schedules: -t only changes the zone runs are shown in
 	if r.Expression != "" {
 		req.Expression = strings.TrimSpace(r.Expression)
@@ -129,7 +165,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 		}
 		fmt.Println(verdict(a.Valid))
 		fmt.Println()
-		renderAnalysis(os.Stdout, a, display)
+		renderAnalysis(os.Stdout, a, display, from)
 		return a.Valid, nil
 	}
 
@@ -151,7 +187,7 @@ func validateSchedule(services *core.Services, args []string) (bool, error) {
 	}
 	for _, a := range stored.Resources {
 		fmt.Println()
-		renderAnalysis(os.Stdout, a, display)
+		renderAnalysis(os.Stdout, a, display, from)
 	}
 	return valid, nil
 }

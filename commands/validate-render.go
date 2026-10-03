@@ -10,8 +10,9 @@ import (
 
 // renderAnalysis prints one validated expression after the OK/FAILED line.
 // display, when set, is the zone run times are shown in instead of the
-// schedule's own; the schedule still runs in its zone.
-func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string) {
+// schedule's own; the schedule still runs in its zone. from, when set, is
+// the time the run lists start from instead of now.
+func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string, from time.Time) {
 	if len(a.Errors) > 0 {
 		renderFindings(w, a.Expression, a.Errors)
 		fmt.Fprintln(w)
@@ -39,14 +40,19 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string) 
 		}
 		fmt.Fprintf(w, "%-15s%s %s → %s\n", name, h.Field, h.Value, h.Resolved)
 	}
-	runs := func(title string, times []time.Time) {
+	runs := func(title, rel string, times []time.Time) {
 		if len(times) == 0 {
 			return
 		}
 		zone := a.Location
 		if display != "" {
-			title += " in " + display
 			zone = display
+		}
+		if !from.IsZero() {
+			title += " " + rel + " " + formatRun(from, zone, []time.Time{from})
+		}
+		if display != "" {
+			title += " in " + display
 		}
 		if a.Illustrative {
 			scope := "the job or call"
@@ -61,8 +67,8 @@ func renderAnalysis(w io.Writer, a *scheduler.ScheduleAnalysis, display string) 
 			fmt.Fprintln(w, "  "+formatRun(t, zone, times))
 		}
 	}
-	runs(countRuns("Next", len(a.NextRuns)), a.NextRuns)
-	runs(countRuns("Previous", len(a.PrevRuns)), a.PrevRuns)
+	runs(countRuns("Next", len(a.NextRuns)), "after", a.NextRuns)
+	runs(countRuns("Previous", len(a.PrevRuns)), "before", a.PrevRuns)
 	if len(a.Warnings) > 0 {
 		fmt.Fprintln(w)
 		fmt.Fprintln(w, "Warnings:")
