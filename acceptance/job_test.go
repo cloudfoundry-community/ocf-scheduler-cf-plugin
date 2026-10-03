@@ -28,14 +28,14 @@ var _ = Describe("Scheduler Jobs", func() {
 
 	Describe("create-job", func() {
 		It("test correct job creation", func() {
-			Expect(cf.Cf("create-job", appName, jobName, `pwd`).
+			Expect(cf.Cf("create-job", appName, jobName, `pwd`, "-m", memory).
 				Wait(time.Second * 10)).To(Exit(0))
 		})
 	})
 
 	Describe("schedule-job", func() {
 		It("test correct job scheduling", func() {
-			Expect(cf.Cf("create-job", appName, jobName, `pwd`).
+			Expect(cf.Cf("create-job", appName, jobName, `pwd`, "-m", memory).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("schedule-job", jobName, `15 * * * *`).
@@ -49,7 +49,7 @@ var _ = Describe("Scheduler Jobs", func() {
 
 	Describe("run-job", func() {
 		It("test correct job manual execution", func() {
-			Expect(cf.Cf("create-job", appName, jobName, `pwd`).
+			Expect(cf.Cf("create-job", appName, jobName, `pwd`, "-m", memory).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("run-job", jobName).
@@ -60,7 +60,7 @@ var _ = Describe("Scheduler Jobs", func() {
 
 	Describe("delete-job", func() {
 		It("test correct job deletion", func() {
-			Expect(cf.Cf("create-job", appName, jobName, `pwd`).
+			Expect(cf.Cf("create-job", appName, jobName, `pwd`, "-m", memory).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("delete-job", jobName).
@@ -78,7 +78,7 @@ var _ = Describe("Scheduler Jobs", func() {
 
 	Describe("delete-job-schedule", func() {
 		It("test correct job schedule deletion", func() {
-			Expect(cf.Cf("create-job", appName, jobName, `pwd`).
+			Expect(cf.Cf("create-job", appName, jobName, `pwd`, "-m", memory).
 				Wait(time.Second * 10)).To(Exit(0))
 
 			Expect(cf.Cf("schedule-job", jobName, `15 * * * *`).
