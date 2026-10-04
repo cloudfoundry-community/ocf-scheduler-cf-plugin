@@ -56,7 +56,7 @@ clean:
 	@rm -f $(DEV_TEST_BUILD) render-cron-help cron_expression_styles.go || true
 
 install: build
-	cf install-plugin $(DEV_TEST_BUILD) -f || true
+	cf install-plugin $(DEV_TEST_BUILD) -f || echo "WARNING: cf install-plugin failed (exit $$?); continuing" >&2
 
 acceptance-tests:
 	go test -timeout 600s ./...
