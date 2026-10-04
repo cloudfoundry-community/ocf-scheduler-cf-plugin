@@ -43,7 +43,10 @@ cf create-space -o "${CF_ORG}" "${CF_SPACE}"
 cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
 header "Installing ${APP_NAME} v${VERSION}"
-cf install-plugin -f "${BUILD_ROOT}/${APP_NAME}-${VERSION}+linux.amd64"
+# make install builds from source and installs that build, so the Makefile
+# targets are tested too. VERSION ties it to the pipeline's version rather
+# than the nearest tag; build marks it as a dev prerelease.
+make install VERSION="${VERSION}"
 
 header "Performing Acceptance Tests"
 make acceptance-tests
