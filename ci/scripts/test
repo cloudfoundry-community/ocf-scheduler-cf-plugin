@@ -43,8 +43,7 @@ cf create-space -o "${CF_ORG}" "${CF_SPACE}"
 cf target -o "${CF_ORG}" -s "${CF_SPACE}"
 
 header "Installing ${APP_NAME} v${VERSION}"
-cp "${BUILD_ROOT}/${APP_NAME}-${VERSION}-linux-amd64" "./${APP_NAME}"
-make install
+cf install-plugin -f "${BUILD_ROOT}/${APP_NAME}-${VERSION}+linux.amd64"
 
 header "Performing Acceptance Tests"
 make acceptance-tests
