@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sort"
 
-	models "code.cloudfoundry.org/cli/plugin/models"
+	models "code.cloudfoundry.org/cli/v8/plugin/models"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"
 	scheduler "github.com/cloudfoundry-community/ocf-scheduler/core"
 	"github.com/ess/hype"
