@@ -10,10 +10,10 @@ import (
 	"strings"
 	"text/template"
 
-	"code.cloudfoundry.org/cli/cf/i18n"
-	"code.cloudfoundry.org/cli/cf/terminal"
-	"code.cloudfoundry.org/cli/cf/trace"
-	"code.cloudfoundry.org/cli/plugin"
+	"code.cloudfoundry.org/cli/v8/cf/i18n"
+	"code.cloudfoundry.org/cli/v8/cf/terminal"
+	"code.cloudfoundry.org/cli/v8/cf/trace"
+	"code.cloudfoundry.org/cli/v8/plugin"
 
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/commands"
 	"github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/core"

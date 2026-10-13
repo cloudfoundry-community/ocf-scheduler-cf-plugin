@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	models "code.cloudfoundry.org/cli/plugin/models"
+	models "code.cloudfoundry.org/cli/v8/plugin/models"
 )
 
 // CliCurler is the subset of plugin.CliConnection needed to issue `cf curl`

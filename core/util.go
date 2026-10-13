@@ -7,8 +7,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"code.cloudfoundry.org/cli/plugin"
-	models "code.cloudfoundry.org/cli/plugin/models"
+	"code.cloudfoundry.org/cli/v8/plugin"
+	models "code.cloudfoundry.org/cli/v8/plugin/models"
 )
 
 func GetBearer(cli plugin.CliConnection) (string, error) {

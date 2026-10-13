@@ -1,7 +1,7 @@
 package core
 
-import "code.cloudfoundry.org/cli/plugin"
-import "code.cloudfoundry.org/cli/cf/terminal"
+import "code.cloudfoundry.org/cli/v8/plugin"
+import "code.cloudfoundry.org/cli/v8/cf/terminal"
 
 type Services struct {
 	CLI    plugin.CliConnection
