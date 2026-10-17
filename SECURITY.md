@@ -4,7 +4,11 @@
 
 Please do not report security problems in public issues or pull requests.
 
-Report them privately by email to <nabramovitz@fivetwenty.io>.
+Report them privately, in either of these ways:
+
+- GitHub private vulnerability reporting:
+  <https://github.com/cloudfoundry-community/ocf-scheduler-cf-plugin/security/advisories/new>
+- Email: <nabramovitz@fivetwenty.io>
 
 Please include the version or commit, the steps to reproduce the problem,
 and the impact you see. We will confirm that we received the report, keep
